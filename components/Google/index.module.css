@@ -1,0 +1,38 @@
+.google-button {
+  --dark: #191924;
+  --lessDark: #2b2b36;
+
+  --text: #6b6b76;
+  --white: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 3rem;
+  padding: 0 1rem;
+
+  transition-duration: 0.1s;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+
+  background: var(--dark);
+}
+.google-button:hover {
+  transform: scale(1.02);
+}
+.google-button:active {
+  transform: scale(0.98);
+}
+.google-button i {
+  margin-right: 1rem;
+
+  font-size: 1rem;
+  color: var(--white);
+}
+.google-button__text {
+  font-family: Avenir;
+  font-size: 1rem;
+  color: var(--white);
+}

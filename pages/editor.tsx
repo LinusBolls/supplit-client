@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import NodeMapEditor from "../components/NodeMapEditor";
+import NodeMapEditor from "../components/NewMapEditor";
 
-const Home: NextPage = () => {
+const Page: NextPage = () => {
   return (
     <>
       <Head>
@@ -17,4 +17,4 @@ const Home: NextPage = () => {
     </>
   );
 };
-export default Home;
+export default Page;

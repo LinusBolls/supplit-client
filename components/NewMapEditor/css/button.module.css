@@ -1,0 +1,30 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 3rem;
+  height: 3rem;
+
+  cursor: pointer;
+  border-radius: 3px;
+}
+.button:hover > * {
+  transform: scale(1.1);
+}
+.button:active {
+  transform: scale(0.9);
+}
+.dot {
+  position: absolute;
+  border-radius: 50%;
+}
+.dot:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+.dot--in {
+  left: -50%;
+}
+.dot--out {
+  right: -50%;
+}

@@ -1,0 +1,25 @@
+{
+  "user": "lkajerk",
+  "date": "walkjrl",
+  "in": {
+    "type": "excel",
+    "src": "file",
+    "from": "vibracoustic",
+    "fields": [
+      ["EAN", true, "ean"],
+      ["Price", true, "price"]
+    ]
+  },
+  "out": {
+    "type": "ari",
+    "src": "database",
+    "from": "supplit",
+    "fields": [
+      ["EAN", true, "ean"],
+      ["Price", true, "price"]
+    ]
+  }
+}
+die kleinste gemeinsame wirklichkeit
+from 0 to 1
+linode
