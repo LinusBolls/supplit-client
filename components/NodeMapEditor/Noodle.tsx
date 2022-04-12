@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import type { RefObject } from "react";
 
 import style from "./index.module.css";
 
-function Noodle({ dotRef1, dotRef2 }: { dotRef1: any; dotRef2: any }) {
+interface NoodleProps {
+  dotRef1: RefObject<HTMLDivElement>;
+  dotRef2: RefObject<HTMLDivElement>;
+}
+function Noodle({ dotRef1, dotRef2 }: NoodleProps) {
   const [pos, setPos] = useState<any>(null);
 
   useEffect(() => {
@@ -13,6 +18,7 @@ function Noodle({ dotRef1, dotRef2 }: { dotRef1: any; dotRef2: any }) {
       console.log("noodle constructor: dots not found");
       return;
     }
+
     setPos({
       x1: dot1.left + dot1.width / 2,
       y1: dot1.top - dot1.height / 2 - 16,
@@ -43,31 +49,4 @@ function Noodle({ dotRef1, dotRef2 }: { dotRef1: any; dotRef2: any }) {
   );
 }
 export default Noodle;
-
-/* NodeMapEditor
-  SVG?
-  MenuBar
-    MenuItem & DropdownMenuItem
-    Validator
-      WarningList
-      Run Button
-      LoadingBar
-  Button & Dot
-  ExpandingRow & Row
-  Column
-  BaseNode
-    ErrHandlingSelect */
-
-// BaseNode rounded like spotify and transform scale (0.9)
-
-// types
-//   string
-//   number
-
-//   ean
-//   email
-//   address
-//   weight
-//   length
-//   area
-//   volume
+export type { NoodleProps };

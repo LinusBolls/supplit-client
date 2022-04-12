@@ -1,66 +1,48 @@
-import { useRef, useState } from "react";
-
+import Dot from "./Dot";
+import NodeInfo from "./NodeInfo";
+import useExpansion from "./useExpansion.hook";
 import style from "./index.module.css";
-import Noodle from "./Noodle";
+import type { Field } from "./types";
 
-interface Props {
+interface NodeRowProps {
   type: "input" | "output";
-  name: string;
+  field: Field;
   hasSeperator?: boolean;
-  isExpanded?: boolean;
-  setExpanded: any;
+  inheritedIsExpanded?: boolean;
+  inheritedSetIsExpanded: any;
 }
 function NodeRow({
   type,
-  name,
+  field,
   hasSeperator = false,
-  isExpanded = false,
-  setExpanded,
-}: Props) {
+  inheritedIsExpanded = false,
+  inheritedSetIsExpanded,
+}: NodeRowProps) {
+  const { Button, isExpanded, containerClassName } = useExpansion({
+    inheritedIsExpanded,
+    inheritedSetIsExpanded,
+  });
+
   const className =
     style.node__row +
     " " +
     style[type === "input" ? "node__row--in" : "node__row--out"];
 
   return (
-    <div
-      className={
-        style["node__row__container"] +
-        " " +
-        (isExpanded ? style["node__row__container--expanded"] : "")
-      }
-    >
+    <div className={containerClassName}>
       <div className={className}>
-        {name}
+        {field.name}
         {hasSeperator && <div className={style.borderEl} />}
-        <button
-          onClick={() => setExpanded(!isExpanded)}
-          className={style.expandButton}
-        >
-          <i className="fas fa-bars" />
-        </button>
+        <Button />
         <Dot />
       </div>
-      {isExpanded && <div className={style.node__row__info}></div>}
+      {isExpanded && (
+        <div className={style.node__row__info}>
+          <NodeInfo field={field} />
+        </div>
+      )}
     </div>
   );
 }
-function Dot() {
-  const dotRef = useRef(null);
-
-  const handler = (e: any) => {
-    e.stopPropagation();
-    window.dispatchEvent(new CustomEvent("dotClick", { detail: dotRef }));
-  };
-  return (
-    <button
-      className={style.dot}
-      title="Connect Node"
-      onClick={handler}
-      ref={dotRef}
-    >
-      <div className={style.dot__child} />
-    </button>
-  );
-}
 export default NodeRow;
+export type { NodeRowProps };

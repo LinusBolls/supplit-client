@@ -1,0 +1,51 @@
+.input {
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  --height: 3rem;
+
+  height: var(--height);
+
+  cursor: pointer;
+  border-radius: 2px;
+
+  transition-duration: 0.1s;
+}
+.input.square {
+  width: var(--height);
+}
+.input.round {
+  border-radius: 50%;
+}
+.input.medium {
+  padding: 0 1rem;
+  min-width: 10rem;
+}
+.input.long {
+  width: 100%;
+}
+
+.dashed:not(:hover) {
+  border: 2px dashed #444;
+  color: #999;
+}
+.dashed:hover {
+  border: 2px dashed #888;
+  color: white;
+}
+.solid:not(:hover) {
+  background: white;
+  color:#222;
+}
+.solid:hover {
+  background: white;
+  color:#222;
+}
+.button:hover {
+  transform: scale(1.05);
+}
+.button:active {
+  transform: scale(0.95);
+}

@@ -1,28 +1,32 @@
 import { useState } from "react";
 
-import style from "./index.module.css";
 import NodeRow from "./NodeRow";
+import style from "./index.module.css";
+import type { Field } from "./types";
 
-interface Props {
+interface NodeBarProps {
   type: "input" | "output";
   align: "left" | "right";
-  items: string[];
+  items: Field[];
 }
-function NodeBar({ type, align, items }: Props) {
+function NodeBar({ type, align, items }: NodeBarProps) {
   const [expandedRowIdx, setExpandedRowIdx] = useState<number | null>(null);
 
   return (
     <div className={style.nodeBar + " " + style[align + "NodeBar"]}>
-      {items.map((i, idx) => (
+      {items.map((field, idx) => (
         <NodeRow
-          type={type}
-          name={i}
           key={idx}
-          isExpanded={idx === expandedRowIdx}
-          setExpanded={(v: boolean) => setExpandedRowIdx(v ? idx : null)}
+          type={type}
+          field={field}
+          inheritedIsExpanded={idx === expandedRowIdx}
+          inheritedSetIsExpanded={(v: boolean) =>
+            setExpandedRowIdx(v ? idx : null)
+          }
         />
       ))}
     </div>
   );
 }
 export default NodeBar;
+export type { NodeBarProps };
