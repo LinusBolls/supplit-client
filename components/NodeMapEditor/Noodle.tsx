@@ -4,8 +4,8 @@ import type { RefObject } from "react";
 import style from "./index.module.css";
 
 interface NoodleProps {
-  dotRef1: RefObject<HTMLDivElement>;
-  dotRef2: RefObject<HTMLDivElement>;
+  dotRef1: RefObject<HTMLButtonElement>;
+  dotRef2: RefObject<HTMLButtonElement>;
 }
 function Noodle({ dotRef1, dotRef2 }: NoodleProps) {
   const [pos, setPos] = useState<any>(null);

@@ -12,8 +12,8 @@ interface NodeData {
   outputs: Field[];
 }
 interface NoodleData {
-  startRef: RefObject<HTMLDivElement>;
-  endRef: RefObject<HTMLDivElement>;
+  startRef: RefObject<HTMLButtonElement>;
+  endRef: RefObject<HTMLButtonElement>;
 }
 interface NodeMapSchema {
   in: {

@@ -5,29 +5,11 @@ interface FieldOption {
   calc: (value: any) => boolean;
 }
 const Field: { [key: string]: FieldOption } = {
-  STRING: {
-    name: "String",
-    example: "",
-    color: "lime",
-    calc: (_: any) => true,
-  },
-  NUMBER: {
-    name: "Number",
-    example: "",
-    color: "red",
-    calc: (value: any) => !isNaN(value),
-  },
   PRICE: {
     name: "Price",
     example: "",
     color: "yellow",
     calc: (value: any) => ["$", "€"].includes(value[value.length - 1]),
-  },
-  EAN: {
-    name: "EAN",
-    example: "",
-    color: "cyan",
-    calc: (value: any) => !isNaN(value) && value.length === 13,
   },
   PERCENTAGE: {
     name: "Percentage",
@@ -35,12 +17,30 @@ const Field: { [key: string]: FieldOption } = {
     color: "blue",
     calc: (value: any) => value[value.length - 1] === "%",
   },
+  EAN: {
+    name: "EAN",
+    example: "",
+    color: "cyan",
+    calc: (value: any) => !isNaN(value) && value.length === 13,
+  },
+  NUMBER: {
+    name: "Number",
+    example: "",
+    color: "red",
+    calc: (value: any) => !isNaN(value),
+  },
+  STRING: {
+    name: "String",
+    example: "",
+    color: "lime",
+    calc: (_: any) => true,
+  },
 };
 function getType(values: any[]) {
   if (!values.length) return Field.STRING;
 
   for (const field of Object.values(Field)) {
-    if (field.calc(values)) return field;
+    if (values.filter((i) => i != null).every(field.calc)) return field;
   }
   return Field.String;
 }

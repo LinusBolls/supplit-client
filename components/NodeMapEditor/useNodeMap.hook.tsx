@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { RefObject } from "react";
 
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
@@ -43,23 +44,25 @@ function useNodeMap() {
   const [bodyNodes, setBodyNodes] = useState<NodeData[]>([]);
   const [noodles, setNoodles] = useState<NoodleData[]>([]);
 
-  const [activeDot, setActiveDot] = useState<any>(null);
+  const [activeDot, setActiveDot] =
+    useState<RefObject<HTMLButtonElement> | null>(null);
 
   const allNodes = [inNode, ...bodyNodes, outNode];
   const allPorts2d = allNodes.map((i: NodeData) => [...i.inputs, ...i.outputs]);
   const allPorts = [].concat.apply([], allPorts2d as any[]);
-  console.log({ allPorts });
+
+  console.log("allPorts:", allPorts);
 
   function handleDotClick(e: any) {
     e.stopImmediatePropagation();
 
     const detail: DotClickEventDetail = e.detail;
 
-    setActiveDot((currentActiveDot: any) => {
-      if (!currentActiveDot) return detail;
+    setActiveDot((currentActiveDot) => {
+      if (!currentActiveDot) return detail.ref;
 
       const newNoodle: NoodleData = {
-        startRef: currentActiveDot.ref,
+        startRef: currentActiveDot,
         endRef: detail.ref,
       };
       setNoodles((prev) => [...prev, newNoodle]);
