@@ -15,7 +15,7 @@ function Noodle({ dotRef1, dotRef2 }: NoodleProps) {
     const dot2 = dotRef2.current?.getBoundingClientRect();
 
     if (!dot1 || !dot2) {
-      console.log("noodle constructor: dots not found");
+      console.error("noodle constructor: dots not found");
       return;
     }
 

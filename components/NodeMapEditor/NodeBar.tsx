@@ -8,8 +8,9 @@ interface NodeBarProps {
   type: "input" | "output";
   align: "left" | "right";
   items: Field[];
+  nodeId: number;
 }
-function NodeBar({ type, align, items }: NodeBarProps) {
+function NodeBar({ type, align, items, nodeId }: NodeBarProps) {
   const [expandedRowIdx, setExpandedRowIdx] = useState<number | null>(null);
 
   return (
@@ -17,6 +18,7 @@ function NodeBar({ type, align, items }: NodeBarProps) {
       {items.map((field, idx) => (
         <NodeRow
           key={idx}
+          address={[nodeId, idx]}
           type={type}
           field={field}
           inheritedIsExpanded={idx === expandedRowIdx}

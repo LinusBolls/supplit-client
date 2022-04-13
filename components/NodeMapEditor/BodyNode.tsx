@@ -6,7 +6,17 @@ import useExpansion from "./useExpansion.hook";
 import style from "./index.module.css";
 import type { NodeData } from "./types";
 
-function BodyNode({ title, color, inputs, outputs }: NodeData) {
+interface BodyNodeProps {
+  nodeId: number;
+}
+
+function BodyNode({
+  title,
+  color,
+  inputs,
+  outputs,
+  nodeId,
+}: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
 
   const [{ opacity }, dragRef] = useDrag(
@@ -33,8 +43,13 @@ function BodyNode({ title, color, inputs, outputs }: NodeData) {
       </div>
       {isExpanded && (
         <>
-          <NodeBar type="output" align="right" items={outputs} />
-          <NodeBar type="input" align="left" items={inputs} />
+          <NodeBar
+            nodeId={nodeId}
+            type="output"
+            align="right"
+            items={outputs}
+          />
+          <NodeBar nodeId={nodeId} type="input" align="left" items={inputs} />
         </>
       )}
     </div>

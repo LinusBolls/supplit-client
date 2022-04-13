@@ -14,6 +14,8 @@ interface NodeData {
 interface NoodleData {
   startRef: RefObject<HTMLButtonElement>;
   endRef: RefObject<HTMLButtonElement>;
+  startAddress: [number, number];
+  endAddress: [number, number];
 }
 interface NodeMapSchema {
   in: {

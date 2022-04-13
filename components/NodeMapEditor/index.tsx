@@ -5,6 +5,8 @@ import axios from "axios";
 
 import TopBar from "./TopBar";
 import NodeBar from "./NodeBar";
+import BodyNode from "./BodyNode";
+import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
 import useNodeMap from "./useNodeMap.hook";
 import csvToColumns from "./csvToColumns";
@@ -25,8 +27,8 @@ function NodeMapEditor() {
     setinNode,
     outNode,
     setoutNode,
-    bodyNodeHtml,
-    noodleHtml,
+    noodles,
+    bodyNodes,
     setBodyNodes,
     calc,
   } = useNodeMap();
@@ -122,12 +124,22 @@ function NodeMapEditor() {
             Exit
           </button>
         </TopBar>
-        <NodeBar type="output" align="left" items={inNode.outputs} />
+        <NodeBar nodeId={0} type="output" align="left" items={inNode.outputs} />
+        <NodeBar nodeId={1} type="input" align="right" items={outNode.inputs} />
 
-        {bodyNodeHtml}
-        {noodleHtml}
-
-        <NodeBar type="input" align="right" items={outNode.inputs} />
+        {bodyNodes.map((i, idx) => (
+          <BodyNode
+            key={idx}
+            nodeId={idx + 2}
+            title={i.title}
+            color={i.color}
+            inputs={i.inputs}
+            outputs={i.outputs}
+          />
+        ))}
+        {noodles.map((i) => (
+          <Noodle dotRef1={i.startRef} dotRef2={i.endRef} />
+        ))}
       </DndProvider>
     </div>
   );

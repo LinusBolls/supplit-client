@@ -10,6 +10,7 @@ interface NodeRowProps {
   hasSeperator?: boolean;
   inheritedIsExpanded?: boolean;
   inheritedSetIsExpanded: any;
+  address: [number, number];
 }
 function NodeRow({
   type,
@@ -17,6 +18,7 @@ function NodeRow({
   hasSeperator = false,
   inheritedIsExpanded = false,
   inheritedSetIsExpanded,
+  address,
 }: NodeRowProps) {
   const { Button, isExpanded, containerClassName } = useExpansion({
     inheritedIsExpanded,
@@ -34,7 +36,7 @@ function NodeRow({
         {field.name}
         {hasSeperator && <div className={style.borderEl} />}
         <Button />
-        <Dot />
+        <Dot address={address} />
       </div>
       {isExpanded && (
         <div className={style.node__row__info}>

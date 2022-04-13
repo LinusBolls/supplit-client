@@ -4,25 +4,25 @@ import type { RefObject } from "react";
 import style from "./index.module.css";
 import inputStyle from "../../styles/input.module.css";
 
-interface DotProps {}
+interface DotProps {
+  address: [number, number];
+}
 interface DotClickEventDetail {
   ref: RefObject<HTMLButtonElement>;
+  address: [number, number];
 }
+type DotClickEvent = CustomEvent<DotClickEventDetail>;
 
-function Dot({}: DotProps) {
+function Dot({ address }: DotProps) {
   const dotRef = useRef<HTMLButtonElement>(null);
 
   const onClickHandler = (e: any) => {
     e.stopPropagation();
-    console.log(
-      dotRef.current?.parentElement?.parentElement?.parentElement?.parentElement
-        ?.classList
-    );
-    window.dispatchEvent(
-      new CustomEvent("dotClick", {
-        detail: { ref: dotRef } as DotClickEventDetail,
-      })
-    );
+
+    const event: DotClickEvent = new CustomEvent("dotClick", {
+      detail: { ref: dotRef, address },
+    });
+    window.dispatchEvent(event);
   };
   return (
     <button
@@ -46,4 +46,4 @@ function Dot({}: DotProps) {
   );
 }
 export default Dot;
-export type { DotProps, DotClickEventDetail };
+export type { DotProps, DotClickEventDetail, DotClickEvent };
