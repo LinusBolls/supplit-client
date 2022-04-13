@@ -10,13 +10,7 @@ interface BodyNodeProps {
   nodeId: number;
 }
 
-function BodyNode({
-  title,
-  color,
-  inputs,
-  outputs,
-  nodeId,
-}: NodeData & BodyNodeProps) {
+function BodyNode({ title, color, fields, nodeId }: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
 
   const [{ opacity }, dragRef] = useDrag(
@@ -43,13 +37,7 @@ function BodyNode({
       </div>
       {isExpanded && (
         <>
-          <NodeBar
-            nodeId={nodeId}
-            type="output"
-            align="right"
-            items={outputs}
-          />
-          <NodeBar nodeId={nodeId} type="input" align="left" items={inputs} />
+          <NodeBar nodeId={nodeId} items={fields} />
         </>
       )}
     </div>

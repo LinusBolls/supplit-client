@@ -4,23 +4,35 @@ import type { DotClickEventDetail, DotClickEvent } from "./Dot";
 import type { Field, NodeData, NoodleData, NodeMapSchema } from "./types";
 
 function makeSchema(
-  inNode: string[],
-  outNode: string[],
+  inNode: NodeData,
+  outNode: NodeData,
   bodyNodes: NodeData[],
-  noodles: NoodleData[]
+  noodles: any
 ): NodeMapSchema {
+  const allNodes = [inNode, ...bodyNodes, outNode];
+
+  const allFields = [].concat.apply(
+    [],
+    allNodes.map((i) => i.fields) as any[]
+  ) as any;
+
+  for (const [idx, _] of noodles.entries()) {
+    const things = allFields.filter((i: any) => i.noodles.includes(idx));
+  }
   return {
     in: {
-      columns: inNode,
+      columns: inNode.fields.map((i) => i.name),
     },
     out: {
-      columns: outNode,
+      columns: outNode.fields.map((i) => i.name),
     },
     nodes: bodyNodes.map((i) => i.title),
-    noodles: noodles.map((i) => [
-      [0, 0],
-      [0, 0],
-    ]),
+    noodles: [
+      [
+        [0, 0],
+        [0, 0],
+      ],
+    ],
   };
 }
 
@@ -28,23 +40,17 @@ function useNodeMap() {
   const [inNode, setinNode] = useState<NodeData>({
     title: "loading",
     color: "orange",
-    inputs: [],
-    outputs: [],
+    fields: [],
   });
   const [outNode, setoutNode] = useState<NodeData>({
     title: "loading",
     color: "orange",
-    inputs: [],
-    outputs: [],
+    fields: [],
   });
   const [bodyNodes, setBodyNodes] = useState<NodeData[]>([]);
   const [noodles, setNoodles] = useState<NoodleData[]>([]);
 
   const [activeDot, setActiveDot] = useState<DotClickEventDetail | null>(null);
-
-  // const allNodes = [inNode, ...bodyNodes, outNode];
-  // const allPorts2d = allNodes.map((i: NodeData) => [...i.inputs, ...i.outputs]);
-  // const allPorts = [].concat.apply([], allPorts2d as any[]);
 
   function getPortByAddress(address: [number, number]) {
     const [nodeId, portId] = address;
@@ -52,39 +58,49 @@ function useNodeMap() {
     const allNodes = [inNode, outNode, ...bodyNodes];
     const node = allNodes[nodeId];
 
-    const allPorts = [...node.inputs, ...node.outputs];
-    const port = allPorts[portId];
+    const port = node.fields[portId];
 
     return port;
   }
 
-  function updatePort(address: [number, number], newEntry: Field) {
+  function updatePort(address: [number, number], newEntry: Partial<Field>) {
     const [nodeId, portId] = address;
 
-    if (nodeId === 0)
+    console.log(nodeId);
+    console.log([inNode, outNode, ...bodyNodes]);
+
+    if (nodeId === 0) {
       setinNode((prev) => {
-        prev.inputs[portId] = newEntry;
+        console.log("inNode");
+
+        prev.fields[portId] = { ...prev.fields[portId], ...newEntry };
 
         return prev;
       });
+      return;
+    }
     if (nodeId === 1) {
       setoutNode((prev) => {
-        prev.inputs[portId] = newEntry;
+        console.log("outNode");
+        prev.fields[portId] = { ...prev.fields[portId], ...newEntry };
 
         return prev;
       });
+      return;
     }
     setBodyNodes((prev) => {
-      prev[nodeId].inputs[portId] = newEntry;
+      console.log("bodyNode");
 
+      prev[nodeId - 2].fields[portId] = {
+        ...prev[nodeId - 2].fields[portId],
+        ...newEntry,
+      };
       return prev;
     });
   }
 
   function handleDotClick(e: DotClickEvent) {
     e.stopImmediatePropagation();
-
-    console.log("clicked on:", e.detail.address);
 
     setActiveDot((currentActiveDot) => {
       if (!currentActiveDot) return e.detail;
@@ -100,8 +116,12 @@ function useNodeMap() {
       const startPort = getPortByAddress(currentActiveDot.address);
       const endPort = getPortByAddress(e.detail.address);
 
-      console.log("connecting:", startPort, endPort);
-
+      updatePort(currentActiveDot.address, {
+        noodles: [noodles.length],
+      });
+      updatePort(e.detail.address, {
+        noodles: [noodles.length],
+      });
       return null;
     });
   }
@@ -111,7 +131,7 @@ function useNodeMap() {
 
     return () =>
       window?.removeEventListener("dotClick", handleDotClick as any, false);
-  }, [bodyNodes]);
+  }, [inNode, outNode, bodyNodes]);
 
   return {
     inNode,
@@ -125,13 +145,7 @@ function useNodeMap() {
     activeDot,
     setActiveDot,
 
-    calc: () =>
-      makeSchema(
-        inNode.outputs.map((i) => i.name),
-        outNode.inputs.map((i) => i.name),
-        bodyNodes,
-        noodles
-      ),
+    calc: () => makeSchema(inNode, outNode, bodyNodes, noodles),
   };
 }
 export default useNodeMap;

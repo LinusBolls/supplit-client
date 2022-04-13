@@ -109,10 +109,10 @@
 
   overflow-y: scroll;
 }
-.nodeMapEditor .leftNodeBar {
+.nodeMapEditor :nth-child(1) {
   left: 0;
 }
-.nodeMapEditor .rightNodeBar {
+.nodeMapEditor :nth-child(2)  {
   right: 0;
 }
 .topBar {

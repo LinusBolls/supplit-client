@@ -4,12 +4,14 @@ interface Field {
   name: string;
   type: string;
   example: string;
+
+  facing: "input" | "output";
+  noodles: number[];
 }
 interface NodeData {
   title: string;
   color: string;
-  inputs: Field[];
-  outputs: Field[];
+  fields: Field[];
 }
 interface NoodleData {
   startRef: RefObject<HTMLButtonElement>;

@@ -5,7 +5,6 @@ import style from "./index.module.css";
 import type { Field } from "./types";
 
 interface NodeRowProps {
-  type: "input" | "output";
   field: Field;
   hasSeperator?: boolean;
   inheritedIsExpanded?: boolean;
@@ -13,7 +12,6 @@ interface NodeRowProps {
   address: [number, number];
 }
 function NodeRow({
-  type,
   field,
   hasSeperator = false,
   inheritedIsExpanded = false,
@@ -28,7 +26,7 @@ function NodeRow({
   const className =
     style.node__row +
     " " +
-    style[type === "input" ? "node__row--in" : "node__row--out"];
+    style[field.facing === "output" ? "node__row--in" : "node__row--out"];
 
   return (
     <div className={containerClassName}>

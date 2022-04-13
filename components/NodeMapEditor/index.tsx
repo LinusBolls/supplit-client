@@ -38,8 +38,7 @@ function NodeMapEditor() {
       setinNode({
         title: result.files[0].name,
         color: "orange",
-        inputs: [],
-        outputs: csvToColumns(result.files[0].papa.data as string[][]),
+        fields: csvToColumns(result.files[0].papa.data as string[][], "output"),
       });
     }
   }, [result]);
@@ -48,26 +47,27 @@ function NodeMapEditor() {
     setoutNode({
       title: "Ari Schema",
       color: "orange",
-      inputs: csvToColumns(EXAMPLE_OUT),
-      outputs: [],
+      fields: csvToColumns(EXAMPLE_OUT, "input"),
     });
 
     setBodyNodes([
       {
         title: "Validate EAN",
         color: "yellow",
-        inputs: [
+        fields: [
           {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
+            facing: "input",
+            noodles: [],
           },
-        ],
-        outputs: [
           {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
+            facing: "output",
+            noodles: [],
           },
         ],
       },
@@ -124,8 +124,8 @@ function NodeMapEditor() {
             Exit
           </button>
         </TopBar>
-        <NodeBar nodeId={0} type="output" align="left" items={inNode.outputs} />
-        <NodeBar nodeId={1} type="input" align="right" items={outNode.inputs} />
+        <NodeBar nodeId={0} items={inNode.fields} />
+        <NodeBar nodeId={1} items={outNode.fields} />
 
         {bodyNodes.map((i, idx) => (
           <BodyNode
@@ -133,8 +133,7 @@ function NodeMapEditor() {
             nodeId={idx + 2}
             title={i.title}
             color={i.color}
-            inputs={i.inputs}
-            outputs={i.outputs}
+            fields={i.fields}
           />
         ))}
         {noodles.map((i) => (

@@ -49,13 +49,15 @@ function invertCsv(content: any[][]) {
 
   return content[0].map((_, idx) => content.map((col) => col[idx]));
 }
-function csvToColumns(rawCsv: any[][]) {
+function csvToColumns(rawCsv: any[][], facing: "input" | "output") {
   const invertedCsv = invertCsv(rawCsv);
 
   const dinge = invertedCsv.map(([columnName, ...values]) => ({
     name: columnName,
     type: getType(values).name,
     example: values.filter((i) => i !== "" && i != null)[0],
+    noodles: [],
+    facing,
   }));
   return dinge;
 }
