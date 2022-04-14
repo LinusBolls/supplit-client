@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { useCallback, useEffect, useState } from "react";
+import { useDrop } from "react-dnd";
+import type { XYCoord } from "react-dnd";
+import update from "immutability-helper";
 import axios from "axios";
 
 import TopBar from "./TopBar";
@@ -31,6 +32,7 @@ function NodeMapEditor() {
     bodyNodes,
     setBodyNodes,
     calc,
+    makeUniqueId,
   } = useNodeMap();
 
   useEffect(() => {
@@ -42,6 +44,34 @@ function NodeMapEditor() {
       });
     }
   }, [result]);
+
+  const moveBox = useCallback(
+    (id: string, left: number, top: number) => {
+      setBodyNodes(
+        bodyNodes
+        // update(bodyNodes, {
+        //   [id]: {
+        //     $merge: { left, top },
+        //   },
+        // })
+      );
+    },
+    [bodyNodes, setBodyNodes]
+  );
+
+  const [, dropRef] = useDrop(
+    () => ({
+      accept: "NODE",
+      drop(item: any, monitor) {
+        const delta = monitor.getDifferenceFromInitialOffset() as XYCoord;
+        const left = Math.round(item.left + delta.x);
+        const top = Math.round(item.top + delta.y);
+
+        moveBox(item.id, left, top);
+      },
+    }),
+    [moveBox]
+  );
 
   useEffect(() => {
     setoutNode({
@@ -59,14 +89,14 @@ function NodeMapEditor() {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
-            facing: "input",
+            facing: "output",
             noodles: [],
           },
           {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
-            facing: "output",
+            facing: "input",
             noodles: [],
           },
         ],
@@ -81,6 +111,8 @@ function NodeMapEditor() {
     const csv = result.files[0].papa.data;
 
     console.log({ schema, csv });
+
+    alert(JSON.stringify(schema.noodles, null, 2));
 
     if (result.files[0].papa.errors)
       return console.error("error during csv file parsing");
@@ -110,36 +142,34 @@ function NodeMapEditor() {
     inputStyle.solid;
 
   return (
-    <div className={style.nodeMapEditor}>
-      <DndProvider backend={HTML5Backend}>
-        <TopBar>
-          <button onClick={sendSache} className={submitButtonClassName}>
-            Ballern
-          </button>
-          {inNode.title + " to " + outNode.title}
-          <button
-            onClick={() => setResult(null)}
-            className={submitButtonClassName}
-          >
-            Exit
-          </button>
-        </TopBar>
-        <NodeBar nodeId={0} items={inNode.fields} />
-        <NodeBar nodeId={1} items={outNode.fields} />
+    <div className={style.nodeMapEditor} ref={dropRef}>
+      <TopBar>
+        <button onClick={sendSache} className={submitButtonClassName}>
+          Ballern
+        </button>
+        {inNode.title + " to " + outNode.title}
+        <button
+          onClick={() => setResult(null)}
+          className={submitButtonClassName}
+        >
+          Exit
+        </button>
+      </TopBar>
+      <NodeBar nodeId={0} items={inNode.fields} />
+      <NodeBar nodeId={1} items={outNode.fields} />
 
-        {bodyNodes.map((i, idx) => (
-          <BodyNode
-            key={idx}
-            nodeId={idx + 2}
-            title={i.title}
-            color={i.color}
-            fields={i.fields}
-          />
-        ))}
-        {noodles.map((i) => (
-          <Noodle dotRef1={i.startRef} dotRef2={i.endRef} />
-        ))}
-      </DndProvider>
+      {bodyNodes.map((i, idx) => (
+        <BodyNode
+          key={idx}
+          nodeId={idx + 2}
+          title={i.title}
+          color={i.color}
+          fields={i.fields}
+        />
+      ))}
+      {noodles.map((i, idx) => (
+        <Noodle key={idx} dotRef1={i.startRef} dotRef2={i.endRef} />
+      ))}
     </div>
   );
 }

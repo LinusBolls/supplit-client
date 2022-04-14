@@ -26,15 +26,15 @@ function NodeRow({
   const className =
     style.node__row +
     " " +
-    style[field.facing === "output" ? "node__row--in" : "node__row--out"];
+    style[field.facing === "input" ? "node__row--in" : "node__row--out"];
 
   return (
     <div className={containerClassName}>
       <div className={className}>
+        <Dot address={address} />
         {field.name}
         {hasSeperator && <div className={style.borderEl} />}
         <Button />
-        <Dot address={address} />
       </div>
       {isExpanded && (
         <div className={style.node__row__info}>

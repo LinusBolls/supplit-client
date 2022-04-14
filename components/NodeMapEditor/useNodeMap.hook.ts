@@ -3,21 +3,33 @@ import { useEffect, useState } from "react";
 import type { DotClickEventDetail, DotClickEvent } from "./Dot";
 import type { Field, NodeData, NoodleData, NodeMapSchema } from "./types";
 
+const makeIdGenerator = () => {
+  let counter = 0;
+
+  return () => {
+    counter++;
+
+    return counter.toString();
+  };
+};
+const makeUniqueId = makeIdGenerator();
+
 function makeSchema(
   inNode: NodeData,
   outNode: NodeData,
   bodyNodes: NodeData[],
   noodles: any
 ): NodeMapSchema {
-  const allNodes = [inNode, ...bodyNodes, outNode];
+  const allNodes = [inNode, outNode, ...bodyNodes];
 
-  const allFields = [].concat.apply(
-    [],
-    allNodes.map((i) => i.fields) as any[]
-  ) as any;
+  noodles = noodles.map((i: any) => []);
 
-  for (const [idx, _] of noodles.entries()) {
-    const things = allFields.filter((i: any) => i.noodles.includes(idx));
+  for (const [nodeId, node] of allNodes.entries() as any) {
+    for (const [portId, field] of node.fields.entries()) {
+      for (const noodle of field.noodles) {
+        noodles[noodle].push([nodeId, portId]);
+      }
+    }
   }
   return {
     in: {
@@ -27,12 +39,7 @@ function makeSchema(
       columns: outNode.fields.map((i) => i.name),
     },
     nodes: bodyNodes.map((i) => i.title),
-    noodles: [
-      [
-        [0, 0],
-        [0, 0],
-      ],
-    ],
+    noodles,
   };
 }
 
@@ -49,7 +56,6 @@ function useNodeMap() {
   });
   const [bodyNodes, setBodyNodes] = useState<NodeData[]>([]);
   const [noodles, setNoodles] = useState<NoodleData[]>([]);
-
   const [activeDot, setActiveDot] = useState<DotClickEventDetail | null>(null);
 
   function getPortByAddress(address: [number, number]) {
@@ -66,13 +72,8 @@ function useNodeMap() {
   function updatePort(address: [number, number], newEntry: Partial<Field>) {
     const [nodeId, portId] = address;
 
-    console.log(nodeId);
-    console.log([inNode, outNode, ...bodyNodes]);
-
     if (nodeId === 0) {
       setinNode((prev) => {
-        console.log("inNode");
-
         prev.fields[portId] = { ...prev.fields[portId], ...newEntry };
 
         return prev;
@@ -81,7 +82,6 @@ function useNodeMap() {
     }
     if (nodeId === 1) {
       setoutNode((prev) => {
-        console.log("outNode");
         prev.fields[portId] = { ...prev.fields[portId], ...newEntry };
 
         return prev;
@@ -89,8 +89,6 @@ function useNodeMap() {
       return;
     }
     setBodyNodes((prev) => {
-      console.log("bodyNode");
-
       prev[nodeId - 2].fields[portId] = {
         ...prev[nodeId - 2].fields[portId],
         ...newEntry,
@@ -113,8 +111,7 @@ function useNodeMap() {
       };
       setNoodles((prev) => [...prev, newNoodle]);
 
-      const startPort = getPortByAddress(currentActiveDot.address);
-      const endPort = getPortByAddress(e.detail.address);
+      console.log("connecting", currentActiveDot.address, e.detail.address);
 
       updatePort(currentActiveDot.address, {
         noodles: [noodles.length],
@@ -131,7 +128,7 @@ function useNodeMap() {
 
     return () =>
       window?.removeEventListener("dotClick", handleDotClick as any, false);
-  }, [inNode, outNode, bodyNodes]);
+  }, [inNode, outNode, bodyNodes, noodles]);
 
   return {
     inNode,
@@ -144,6 +141,7 @@ function useNodeMap() {
     setNoodles,
     activeDot,
     setActiveDot,
+    makeUniqueId,
 
     calc: () => makeSchema(inNode, outNode, bodyNodes, noodles),
   };

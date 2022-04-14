@@ -43,6 +43,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 
   height: 3rem;
 
@@ -64,12 +65,14 @@
   border-bottom: 1px solid var(--text);
 }
 .node__row.node__row--in {
-  justify-content: flex-start;
+  
+  flex-direction: row-reverse;
   padding-left: 1.5rem;
   padding-right: 1rem;
 }
 .node__row.node__row--out {
-  justify-content: flex-end;
+  
+  flex-direction: row;
   padding-left: 1rem;
   padding-right: 1.5rem;
 }
@@ -109,20 +112,19 @@
 
   overflow-y: scroll;
 }
-.nodeMapEditor :nth-child(1) {
-  left: 0;
+.nodeMapEditor :nth-child(2) {
+  left: 0; 
 }
-.nodeMapEditor :nth-child(2)  {
+.nodeMapEditor :nth-child(3)  {
   right: 0;
 }
 .topBar {
   position: sticky;
   display: flex;
-
   align-items: center;
-  
 
   z-index: 999;
+  transform: rotate(0);
   top: 0;
 
   height: 4rem;
@@ -187,6 +189,6 @@
   height: 3rem;
   padding: 0 1.5rem;
 }
-.nodeMapEditor > *:not(.noodle) {
+.nodeMapEditor > *:not(.noodle):not(.topBar) {
   z-index: 1;
 }
