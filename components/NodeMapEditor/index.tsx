@@ -25,38 +25,42 @@ function NodeMapEditor() {
 
   const {
     inNode,
-    setinNode,
     outNode,
-    setoutNode,
-    noodles,
     bodyNodes,
-    setBodyNodes,
+    nodes,
+    setNodes,
+    noodles,
     calc,
     makeUniqueId,
   } = useNodeMap();
 
   useEffect(() => {
     if (result?.hasFiles) {
-      setinNode({
-        title: result.files[0].name,
-        color: "orange",
-        fields: csvToColumns(result.files[0].papa.data as string[][], "output"),
-      });
+      setNodes((prev) => ({
+        ...prev,
+        in: {
+          title: result.files[0].name,
+          color: "orange",
+          fields: csvToColumns(
+            result.files[0].papa.data as string[][],
+            "output"
+          ),
+        },
+      }));
     }
   }, [result]);
 
   const moveBox = useCallback(
     (id: string, left: number, top: number) => {
-      setBodyNodes(
-        bodyNodes
-        // update(bodyNodes, {
-        //   [id]: {
-        //     $merge: { left, top },
-        //   },
-        // })
+      setNodes(
+        update(nodes, {
+          [id]: {
+            $merge: { title: "ding" },
+          },
+        })
       );
     },
-    [bodyNodes, setBodyNodes]
+    [nodes, setNodes]
   );
 
   const [, dropRef] = useDrop(
@@ -74,14 +78,14 @@ function NodeMapEditor() {
   );
 
   useEffect(() => {
-    setoutNode({
-      title: "Ari Schema",
-      color: "orange",
-      fields: csvToColumns(EXAMPLE_OUT, "input"),
-    });
-
-    setBodyNodes([
-      {
+    setNodes((prev) => ({
+      ...prev,
+      out: {
+        title: "Ari Schema",
+        color: "orange",
+        fields: csvToColumns(EXAMPLE_OUT, "input"),
+      },
+      [makeUniqueId()]: {
         title: "Validate EAN",
         color: "yellow",
         fields: [
@@ -101,7 +105,7 @@ function NodeMapEditor() {
           },
         ],
       },
-    ]);
+    }));
   }, []);
 
   async function sendSache() {
@@ -158,9 +162,9 @@ function NodeMapEditor() {
       <NodeBar nodeId={0} items={inNode.fields} />
       <NodeBar nodeId={1} items={outNode.fields} />
 
-      {bodyNodes.map((i, idx) => (
+      {Object.entries(bodyNodes).map(([id, i], idx) => (
         <BodyNode
-          key={idx}
+          key={id}
           nodeId={idx + 2}
           title={i.title}
           color={i.color}
