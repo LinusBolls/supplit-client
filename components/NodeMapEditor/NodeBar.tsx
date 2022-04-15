@@ -5,18 +5,19 @@ import style from "./index.module.css";
 import type { Field } from "./types";
 
 interface NodeBarProps {
-  items: Field[];
-  nodeId: number;
+  items: { [id: string]: Field };
+  nodeId: string;
 }
 function NodeBar({ items, nodeId }: NodeBarProps) {
   const [expandedRowIdx, setExpandedRowIdx] = useState<number | null>(null);
 
   return (
     <div className={style.nodeBar + " " + style["left" + "NodeBar"]}>
-      {items.map((field, idx) => (
+      {Object.entries(items).map(([fieldId, field], idx) => (
         <NodeRow
           key={idx}
-          address={[nodeId, idx]}
+          nodeId={nodeId}
+          fieldId={fieldId}
           field={field}
           inheritedIsExpanded={idx === expandedRowIdx}
           inheritedSetIsExpanded={(v: boolean) =>

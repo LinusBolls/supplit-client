@@ -9,11 +9,13 @@ import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
-import useNodeMap from "./useNodeMap.hook";
-import csvToColumns from "./csvToColumns";
+import useNodeMap, { makeUniqueId } from "./useNodeMap.hook";
+import csvToFields from "./csvToFields";
 import style from "./index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import promptStyle from "../../styles/prompt.module.css";
+import { Field } from "./types";
+import { NodesProvider } from "./nodes.context";
 
 const EXAMPLE_OUT = [
   ["EAN", "Price", "Vendor Specific Price"],
@@ -23,16 +25,8 @@ const EXAMPLE_OUT = [
 function NodeMapEditor() {
   const [result, setResult] = useState<CsvInputState>(null);
 
-  const {
-    inNode,
-    outNode,
-    bodyNodes,
-    nodes,
-    setNodes,
-    noodles,
-    calc,
-    makeUniqueId,
-  } = useNodeMap();
+  const { inNode, outNode, bodyNodes, nodes, setNodes, noodles, calc } =
+    useNodeMap();
 
   useEffect(() => {
     if (result?.hasFiles) {
@@ -41,7 +35,7 @@ function NodeMapEditor() {
         in: {
           title: result.files[0].name,
           color: "orange",
-          fields: csvToColumns(
+          fields: csvToFields(
             result.files[0].papa.data as string[][],
             "output"
           ),
@@ -52,8 +46,10 @@ function NodeMapEditor() {
 
   const moveBox = useCallback(
     (id: string, left: number, top: number) => {
-      setNodes(
-        update(nodes, {
+      console.log("nodes:", nodes);
+
+      setNodes((prev) =>
+        update(prev, {
           [id]: {
             $merge: { title: "ding" },
           },
@@ -83,27 +79,27 @@ function NodeMapEditor() {
       out: {
         title: "Ari Schema",
         color: "orange",
-        fields: csvToColumns(EXAMPLE_OUT, "input"),
+        fields: csvToFields(EXAMPLE_OUT, "input"),
       },
       [makeUniqueId()]: {
         title: "Validate EAN",
         color: "yellow",
-        fields: [
-          {
+        fields: {
+          [makeUniqueId()]: {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
             facing: "output",
-            noodles: [],
+            ref: "" as any,
           },
-          {
+          [makeUniqueId()]: {
             name: "EAN",
             type: "EAN",
             example: "9374930483909",
             facing: "input",
-            noodles: [],
+            ref: "" as any,
           },
-        ],
+        },
       },
     }));
   }, []);
@@ -145,35 +141,47 @@ function NodeMapEditor() {
     " " +
     inputStyle.solid;
 
+  const fields: { [id: string]: Field } = Object.values(nodes).reduce(
+    (prev, node) => ({ ...prev, ...node.fields }),
+    {}
+  );
+
   return (
     <div className={style.nodeMapEditor} ref={dropRef}>
-      <TopBar>
-        <button onClick={sendSache} className={submitButtonClassName}>
-          Ballern
-        </button>
-        {inNode.title + " to " + outNode.title}
-        <button
-          onClick={() => setResult(null)}
-          className={submitButtonClassName}
-        >
-          Exit
-        </button>
-      </TopBar>
-      <NodeBar nodeId={0} items={inNode.fields} />
-      <NodeBar nodeId={1} items={outNode.fields} />
+      <NodesProvider value={{ nodes, setNodes }}>
+        <TopBar>
+          <button onClick={sendSache} className={submitButtonClassName}>
+            Ballern
+          </button>
+          {inNode.title + " to " + outNode.title}
+          <button
+            onClick={() => setResult(null)}
+            className={submitButtonClassName}
+          >
+            Exit
+          </button>
+        </TopBar>
+        <NodeBar nodeId={"in"} items={inNode.fields} />
+        <NodeBar nodeId={"out"} items={outNode.fields} />
 
-      {Object.entries(bodyNodes).map(([id, i], idx) => (
-        <BodyNode
-          key={id}
-          nodeId={idx + 2}
-          title={i.title}
-          color={i.color}
-          fields={i.fields}
-        />
-      ))}
-      {noodles.map((i, idx) => (
-        <Noodle key={idx} dotRef1={i.startRef} dotRef2={i.endRef} />
-      ))}
+        {Object.entries(bodyNodes).map(([id, i]) => (
+          <BodyNode
+            key={id}
+            nodeId={id}
+            title={i.title}
+            color={i.color}
+            fields={i.fields}
+          />
+        ))}
+
+        {noodles.map(({ startId, endId }, idx) => (
+          <Noodle
+            key={idx}
+            startField={fields[startId]}
+            endField={fields[endId]}
+          />
+        ))}
+      </NodesProvider>
     </div>
   );
 }

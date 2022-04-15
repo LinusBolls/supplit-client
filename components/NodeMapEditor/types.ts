@@ -1,23 +1,26 @@
 import type { RefObject } from "react";
 
+type Address = [number, number];
+type Facing = "input" | "output";
+
 interface Field {
   name: string;
   type: string;
   example: string;
-
-  facing: "input" | "output";
-  noodles: number[];
+  facing: Facing;
+  ref: RefObject<HTMLButtonElement>;
 }
+type FieldWithAddress = Field & {
+  address: Address;
+};
 interface NodeData {
   title: string;
   color: string;
-  fields: Field[];
+  fields: { [id: string]: Field };
 }
 interface NoodleData {
-  startRef: RefObject<HTMLButtonElement>;
-  endRef: RefObject<HTMLButtonElement>;
-  startAddress: [number, number];
-  endAddress: [number, number];
+  startId: string;
+  endId: string;
 }
 interface NodeMapSchema {
   in: {
@@ -27,25 +30,33 @@ interface NodeMapSchema {
     columns: string[];
   };
   nodes: string[];
-  noodles: [number, number][][];
+  noodles: Address[][];
 }
-// const ExampleSchema = {
-//   in: { columns: ["price", "discount"] },
-//   out: { columns: ["newPrice"] },
-//   nodes: ["multiply"],
-//   noodles: [
-//     [
-//       [0, 0],
-//       [2, 0],
-//     ],
-//     [
-//       [1, 0],
-//       [2, 1],
-//     ],
-//     [
-//       [2, 2],
-//       [3, 0],
-//     ],
-//   ],
-// };
-export type { Field, NodeData, NoodleData, NodeMapSchema };
+const exampleSchema: NodeMapSchema = {
+  in: { columns: ["price", "discount"] },
+  out: { columns: ["newPrice"] },
+  nodes: ["multiply"],
+  noodles: [
+    [
+      [0, 0],
+      [2, 0],
+    ],
+    [
+      [1, 0],
+      [2, 1],
+    ],
+    [
+      [2, 2],
+      [3, 0],
+    ],
+  ],
+};
+export type {
+  Address,
+  Facing,
+  Field,
+  FieldWithAddress,
+  NodeData,
+  NoodleData,
+  NodeMapSchema,
+};

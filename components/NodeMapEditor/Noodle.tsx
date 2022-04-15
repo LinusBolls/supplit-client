@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import type { RefObject } from "react";
 
+import type { Field } from "./types";
 import style from "./index.module.css";
 
 interface NoodleProps {
-  dotRef1: RefObject<HTMLButtonElement>;
-  dotRef2: RefObject<HTMLButtonElement>;
+  startField: Field;
+  endField: Field;
 }
-function Noodle({ dotRef1, dotRef2 }: NoodleProps) {
+function Noodle({ startField, endField }: NoodleProps) {
   const [pos, setPos] = useState<any>(null);
 
   useEffect(() => {
-    const dot1 = dotRef1.current?.getBoundingClientRect();
-    const dot2 = dotRef2.current?.getBoundingClientRect();
+    const dot1 = startField.ref.current?.getBoundingClientRect();
+    const dot2 = endField.ref.current?.getBoundingClientRect();
 
     if (!dot1 || !dot2) {
       console.error("noodle constructor: dots not found");

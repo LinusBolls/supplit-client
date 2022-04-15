@@ -1,10 +1,13 @@
+import { makeUniqueId } from "./useNodeMap.hook";
+import { Field, Facing } from "./types";
+
 interface FieldOption {
   name: string;
   example: string;
   color: string;
   calc: (value: any) => boolean;
 }
-const Field: { [key: string]: FieldOption } = {
+const FieldEnum: { [key: string]: FieldOption } = {
   PRICE: {
     name: "Price",
     example: "",
@@ -37,21 +40,19 @@ const Field: { [key: string]: FieldOption } = {
   },
 };
 function getType(values: any[]) {
-  if (!values.length) return Field.STRING;
+  if (!values.length) return FieldEnum.STRING;
 
-  for (const field of Object.values(Field)) {
+  for (const field of Object.values(FieldEnum)) {
     if (values.filter((i) => i != null).every(field.calc)) return field;
   }
-  return Field.String;
+  return FieldEnum.String;
 }
 function invertCsv(content: any[][]) {
   if (!content.length) return [];
 
   return content[0].map((_, idx) => content.map((col) => col[idx]));
 }
-function csvToColumns(rawCsv: any[][], facing: "input" | "output") {
-  const invertedCsv = invertCsv(rawCsv);
-
+function csvToColumns(invertedCsv: any[][], facing: Facing) {
   const dinge = invertedCsv.map(([columnName, ...values]) => ({
     name: columnName,
     type: getType(values).name,
@@ -61,6 +62,25 @@ function csvToColumns(rawCsv: any[][], facing: "input" | "output") {
   }));
   return dinge;
 }
-export default csvToColumns;
-export { Field, getType, invertCsv };
+function columnsToFields(columns: any[]) {
+  const sache = columns.reduce(
+    (prev, col) => ({ ...prev, [makeUniqueId()]: col }),
+    {}
+  );
+  return sache;
+}
+function csvToFields(
+  rawCsv: any[][],
+  facing: Facing
+): { [key: string]: Field } {
+  const invertedCsv = invertCsv(rawCsv);
+  const columns = csvToColumns(invertedCsv, facing);
+
+  const fields = columnsToFields(columns);
+
+  return fields;
+}
+
+export default csvToFields;
+export { FieldEnum, getType, invertCsv, csvToColumns, columnsToFields };
 export type { FieldOption };

@@ -1,26 +1,46 @@
-import { useRef } from "react";
-import type { RefObject } from "react";
+import { useContext, useEffect, useRef } from "react";
+import update from "immutability-helper";
 
 import style from "./index.module.css";
 import inputStyle from "../../styles/input.module.css";
+import NodesContext from "./nodes.context";
 
 interface DotProps {
-  address: [number, number];
+  nodeId: string;
+  fieldId: string;
 }
 interface DotClickEventDetail {
-  ref: RefObject<HTMLButtonElement>;
-  address: [number, number];
+  nodeId: string;
+  fieldId: string;
 }
 type DotClickEvent = CustomEvent<DotClickEventDetail>;
 
-function Dot({ address }: DotProps) {
-  const dotRef = useRef<HTMLButtonElement>(null);
+function Dot({ nodeId, fieldId }: DotProps) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const { setNodes } = useContext(NodesContext);
+
+  useEffect(() => {
+    setNodes((prev: any) =>
+      update(prev, {
+        [nodeId]: {
+          fields: {
+            [fieldId]: {
+              $merge: {
+                ref: buttonRef,
+              },
+            },
+          },
+        },
+      })
+    );
+  }, []);
 
   const onClickHandler = (e: any) => {
     e.stopPropagation();
 
     const event: DotClickEvent = new CustomEvent("dotClick", {
-      detail: { ref: dotRef, address },
+      detail: { nodeId, fieldId },
     });
     window.dispatchEvent(event);
   };
@@ -39,7 +59,7 @@ function Dot({ address }: DotProps) {
       }
       title="Connect Node"
       onClick={onClickHandler}
-      ref={dotRef}
+      ref={buttonRef}
     >
       <div className={style.dot__child} />
     </button>

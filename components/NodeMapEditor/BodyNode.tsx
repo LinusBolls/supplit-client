@@ -7,7 +7,7 @@ import style from "./index.module.css";
 import type { NodeData } from "./types";
 
 interface BodyNodeProps {
-  nodeId: number;
+  nodeId: string;
 }
 
 function BodyNode({ title, color, fields, nodeId }: NodeData & BodyNodeProps) {

@@ -2,21 +2,23 @@ import Dot from "./Dot";
 import NodeInfo from "./NodeInfo";
 import useExpansion from "./useExpansion.hook";
 import style from "./index.module.css";
-import type { Field } from "./types";
+import type { Address, Field } from "./types";
 
 interface NodeRowProps {
+  nodeId: string;
+  fieldId: string;
   field: Field;
   hasSeperator?: boolean;
   inheritedIsExpanded?: boolean;
   inheritedSetIsExpanded: any;
-  address: [number, number];
 }
 function NodeRow({
+  nodeId,
+  fieldId,
   field,
   hasSeperator = false,
   inheritedIsExpanded = false,
   inheritedSetIsExpanded,
-  address,
 }: NodeRowProps) {
   const { Button, isExpanded, containerClassName } = useExpansion({
     inheritedIsExpanded,
@@ -31,7 +33,7 @@ function NodeRow({
   return (
     <div className={containerClassName}>
       <div className={className}>
-        <Dot address={address} />
+        <Dot nodeId={nodeId} fieldId={fieldId} />
         {field.name}
         {hasSeperator && <div className={style.borderEl} />}
         <Button />
