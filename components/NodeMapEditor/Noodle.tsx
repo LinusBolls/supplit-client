@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Field } from "./types";
-import style from "./index.module.css";
+import style from "./styles/index.module.css";
 
 interface NoodleProps {
   startField: Field;
@@ -11,8 +11,8 @@ function Noodle({ startField, endField }: NoodleProps) {
   const [pos, setPos] = useState<any>(null);
 
   useEffect(() => {
-    const dot1 = startField.ref.current?.getBoundingClientRect();
-    const dot2 = endField.ref.current?.getBoundingClientRect();
+    const dot1 = startField.ref?.current?.getBoundingClientRect();
+    const dot2 = endField.ref?.current?.getBoundingClientRect();
 
     if (!dot1 || !dot2) {
       console.error("noodle constructor: dots not found");

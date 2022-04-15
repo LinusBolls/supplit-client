@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import NodeRow from "./NodeRow";
-import style from "./index.module.css";
+import style from "./styles/index.module.css";
 import type { Field } from "./types";
 
 interface NodeBarProps {

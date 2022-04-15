@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import type { DotClickEventDetail, DotClickEvent } from "./Dot";
+import type { DotClickEventDetail, DotClickEvent } from "../Dot";
 import type {
   Address,
   FieldWithAddress,
   NodeData,
   NoodleData,
   NodeMapSchema,
-} from "./types";
+} from "../types";
 
 const makeIdGenerator = () => {
   let counter = 0;
@@ -75,19 +75,28 @@ function useNodeMap() {
       title: "loading",
       color: "orange",
       fields: {},
+      left: 0,
+      top: 0,
     },
     out: {
       title: "loading",
       color: "orange",
       fields: {},
+      left: 0,
+      top: 0,
     },
   });
   const [noodles, setNoodles] = useState<NoodleData[]>([]);
   const [activeDot, setActiveDot] = useState<DotClickEventDetail | null>(null);
 
-  // if (typeof window !== undefined) {
-  //   const storedNodes = localStorage.getItem("schema-nodes");
-  //   const storedNoodles = localStorage.getItem("schema-noodles");
+  // if (
+  //   typeof window !== undefined &&
+  //   typeof window?.localStorage !== undefined
+  // ) {
+  //   const storedNodes = window.localStorage.getItem("schema-nodes");
+  //   const storedNoodles = window.localStorage.getItem("schema-noodles");
+  //   const storedInCsv = window.localStorage.getItem("schema-in-csv");
+  //   const storedOutCsv = window.localStorage.getItem("schema-out-csv");
   // }
 
   function handleDotClick(e: DotClickEvent) {

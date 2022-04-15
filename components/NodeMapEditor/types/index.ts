@@ -8,7 +8,7 @@ interface Field {
   type: string;
   example: string;
   facing: Facing;
-  ref: RefObject<HTMLButtonElement>;
+  ref: RefObject<HTMLButtonElement> | null;
 }
 type FieldWithAddress = Field & {
   address: Address;
@@ -17,6 +17,8 @@ interface NodeData {
   title: string;
   color: string;
   fields: { [id: string]: Field };
+  left: number;
+  top: number;
 }
 interface NoodleData {
   startId: string;

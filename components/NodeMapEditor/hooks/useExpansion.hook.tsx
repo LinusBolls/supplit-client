@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 
-import style from "./index.module.css";
-import inputStyle from "../../styles/input.module.css";
+import style from "../styles/index.module.css";
+import inputStyle from "../../../styles/input.module.css";
 
 interface UseExpansionProps {
   inheritedIsExpanded?: boolean;

@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import { NodeData } from "./types";
+import { NodeData } from "../types";
 
 const NodesContext = createContext<{
   nodes: { [key: string]: NodeData } | null;

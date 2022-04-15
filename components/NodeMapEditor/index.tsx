@@ -9,13 +9,15 @@ import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
-import useNodeMap, { makeUniqueId } from "./useNodeMap.hook";
-import csvToFields from "./csvToFields";
-import style from "./index.module.css";
+import useNodeMap, { makeUniqueId } from "./hooks/useNodeMap.hook";
+import csvToFields from "./util/csvToFields";
+import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import promptStyle from "../../styles/prompt.module.css";
 import { Field } from "./types";
-import { NodesProvider } from "./nodes.context";
+import { NodesProvider } from "./contexts/nodes.context";
+import newNode from "./util/newNode";
+import NodeEnum from "./enums/nodes.enum";
 
 const EXAMPLE_OUT = [
   ["EAN", "Price", "Vendor Specific Price"],
@@ -39,6 +41,8 @@ function NodeMapEditor() {
             result.files[0].papa.data as string[][],
             "output"
           ),
+          left: 0,
+          top: 0,
         },
       }));
     }
@@ -46,12 +50,10 @@ function NodeMapEditor() {
 
   const moveBox = useCallback(
     (id: string, left: number, top: number) => {
-      console.log("nodes:", nodes);
-
       setNodes((prev) =>
         update(prev, {
           [id]: {
-            $merge: { title: "ding" },
+            $merge: { left, top },
           },
         })
       );
@@ -67,11 +69,18 @@ function NodeMapEditor() {
         const left = Math.round(item.left + delta.x);
         const top = Math.round(item.top + delta.y);
 
-        moveBox(item.id, left, top);
+        moveBox(item.nodeId, left, top);
       },
     }),
     [moveBox]
   );
+
+  function addTestNode() {
+    setNodes((prev) => ({
+      ...prev,
+      ...newNode(NodeEnum.VALIDATE_EAN, makeUniqueId, 500, 100),
+    }));
+  }
 
   useEffect(() => {
     setNodes((prev) => ({
@@ -80,28 +89,11 @@ function NodeMapEditor() {
         title: "Ari Schema",
         color: "orange",
         fields: csvToFields(EXAMPLE_OUT, "input"),
-      },
-      [makeUniqueId()]: {
-        title: "Validate EAN",
-        color: "yellow",
-        fields: {
-          [makeUniqueId()]: {
-            name: "EAN",
-            type: "EAN",
-            example: "9374930483909",
-            facing: "output",
-            ref: "" as any,
-          },
-          [makeUniqueId()]: {
-            name: "EAN",
-            type: "EAN",
-            example: "9374930483909",
-            facing: "input",
-            ref: "" as any,
-          },
-        },
+        left: 0,
+        top: 0,
       },
     }));
+    addTestNode();
   }, []);
 
   async function sendSache() {
@@ -160,6 +152,9 @@ function NodeMapEditor() {
           >
             Exit
           </button>
+          <button onClick={addTestNode} className={submitButtonClassName}>
+            Machen
+          </button>
         </TopBar>
         <NodeBar nodeId={"in"} items={inNode.fields} />
         <NodeBar nodeId={"out"} items={outNode.fields} />
@@ -167,6 +162,8 @@ function NodeMapEditor() {
         {Object.entries(bodyNodes).map(([id, i]) => (
           <BodyNode
             key={id}
+            left={i.left}
+            top={i.top}
             nodeId={id}
             title={i.title}
             color={i.color}

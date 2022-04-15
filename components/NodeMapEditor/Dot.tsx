@@ -1,9 +1,9 @@
 import { useContext, useEffect, useRef } from "react";
 import update from "immutability-helper";
 
-import style from "./index.module.css";
+import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
-import NodesContext from "./nodes.context";
+import NodesContext from "./contexts/nodes.context";
 
 interface DotProps {
   nodeId: string;
@@ -19,7 +19,6 @@ function Dot({ nodeId, fieldId }: DotProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { setNodes } = useContext(NodesContext);
-
   useEffect(() => {
     setNodes((prev: any) =>
       update(prev, {

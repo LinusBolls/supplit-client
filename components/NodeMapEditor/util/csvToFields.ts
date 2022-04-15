@@ -1,44 +1,8 @@
-import { makeUniqueId } from "./useNodeMap.hook";
-import { Field, Facing } from "./types";
+import { makeUniqueId } from "../hooks/useNodeMap.hook";
+import FieldEnum from "../enums/fields.enum";
+import type { FieldOption } from "../enums/fields.enum";
+import type { Field, Facing } from "../types";
 
-interface FieldOption {
-  name: string;
-  example: string;
-  color: string;
-  calc: (value: any) => boolean;
-}
-const FieldEnum: { [key: string]: FieldOption } = {
-  PRICE: {
-    name: "Price",
-    example: "",
-    color: "yellow",
-    calc: (value: any) => ["$", "€"].includes(value[value.length - 1]),
-  },
-  PERCENTAGE: {
-    name: "Percentage",
-    example: "",
-    color: "blue",
-    calc: (value: any) => value[value.length - 1] === "%",
-  },
-  EAN: {
-    name: "EAN",
-    example: "",
-    color: "cyan",
-    calc: (value: any) => !isNaN(value) && value.length === 13,
-  },
-  NUMBER: {
-    name: "Number",
-    example: "",
-    color: "red",
-    calc: (value: any) => !isNaN(value),
-  },
-  STRING: {
-    name: "String",
-    example: "",
-    color: "lime",
-    calc: (_: any) => true,
-  },
-};
 function getType(values: any[]) {
   if (!values.length) return FieldEnum.STRING;
 
@@ -55,7 +19,7 @@ function invertCsv(content: any[][]) {
 function csvToColumns(invertedCsv: any[][], facing: Facing) {
   const dinge = invertedCsv.map(([columnName, ...values]) => ({
     name: columnName,
-    type: getType(values).name,
+    type: getType(values).type,
     example: values.filter((i) => i !== "" && i != null)[0],
     noodles: [],
     facing,

@@ -1,8 +1,8 @@
 import Dot from "./Dot";
 import NodeInfo from "./NodeInfo";
-import useExpansion from "./useExpansion.hook";
-import style from "./index.module.css";
-import type { Address, Field } from "./types";
+import useExpansion from "./hooks/useExpansion.hook";
+import style from "./styles/index.module.css";
+import type { Field } from "./types";
 
 interface NodeRowProps {
   nodeId: string;
