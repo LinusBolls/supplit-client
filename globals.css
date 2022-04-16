@@ -2,6 +2,17 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+* {
+  box-sizing: border-box;
+}
+:root {
+  --dark: #191924;
+  --lessDark: #2b2b36;
+
+  --text: #6b6b76;
+  --white: white;
+  --lightText: #ccc;
+}
 html,
 body {
   padding: 0;
@@ -9,14 +20,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
-  background: #444;
+  background: var(--text);
 }
-
 a {
   color: inherit;
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
-}

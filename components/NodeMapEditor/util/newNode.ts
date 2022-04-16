@@ -1,3 +1,4 @@
+import { NodeCategoryEnum } from "../enums/nodes.enum";
 import type { NodeOption } from "../enums/nodes.enum";
 
 function newNode(
@@ -6,7 +7,8 @@ function newNode(
   left: number,
   top: number
 ) {
-  const { title, color, inFields, outFields } = node;
+  const { title, inFields, outFields, category } = node;
+  const { color } = NodeCategoryEnum[category];
 
   const resolvedInFields = inFields.reduce(
     (prev, field) => ({

@@ -8,5 +8,5 @@
   max-width: 42rem;
   padding: 3rem 2rem;
 
-  background: #222;
-} 
+  background: var(--dark);
+}

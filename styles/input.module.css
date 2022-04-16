@@ -28,12 +28,12 @@
 }
 
 .dashed:not(:hover) {
-  border: 2px dashed #444;
-  color: #999;
+  border: 2px dashed var(--text);
+  color: var(--text);
 }
 .dashed:hover {
-  border: 2px dashed #888;
-  color: white;
+  border: 2px dashed var(--lightText);
+  color: var(--lightText);
 }
 .solid:not(:hover) {
   background: white;
@@ -48,4 +48,14 @@
 }
 .button:active {
   transform: scale(0.95);
+}
+.decent:not(:hover) {
+  color: var(--text);
+}
+.decent:hover {
+  color: var(--lightText);
+}
+.active {
+
+  background: rgba(255, 255, 255, 0.1);
 }

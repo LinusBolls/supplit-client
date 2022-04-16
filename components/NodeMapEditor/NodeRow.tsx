@@ -10,7 +10,7 @@ interface NodeRowProps {
   field: Field;
   hasSeperator?: boolean;
   inheritedIsExpanded?: boolean;
-  inheritedSetIsExpanded: any;
+  inheritedSetIsExpanded?: () => void;
 }
 function NodeRow({
   nodeId,

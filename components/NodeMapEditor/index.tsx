@@ -4,7 +4,7 @@ import type { XYCoord } from "react-dnd";
 import update from "immutability-helper";
 import axios from "axios";
 
-import TopBar from "./TopBar";
+import TopBar, { MenuOption } from "./TopBar";
 import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
@@ -17,7 +17,7 @@ import promptStyle from "../../styles/prompt.module.css";
 import { Field } from "./types";
 import { NodesProvider } from "./contexts/nodes.context";
 import newNode from "./util/newNode";
-import NodeEnum from "./enums/nodes.enum";
+import NodeEnum, { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
 
 const EXAMPLE_OUT = [
   ["EAN", "Price", "Vendor Specific Price"],
@@ -75,10 +75,10 @@ function NodeMapEditor() {
     [moveBox]
   );
 
-  function addTestNode() {
+  function addNode(node: NodeOption) {
     setNodes((prev) => ({
       ...prev,
-      ...newNode(NodeEnum.VALIDATE_EAN, makeUniqueId, 500, 100),
+      ...newNode(node, makeUniqueId, 500, 100),
     }));
   }
 
@@ -93,7 +93,6 @@ function NodeMapEditor() {
         top: 0,
       },
     }));
-    addTestNode();
   }, []);
 
   async function sendSache() {
@@ -133,31 +132,89 @@ function NodeMapEditor() {
     " " +
     inputStyle.solid;
 
+  const decentButtonClassName =
+    inputStyle.input +
+    " " +
+    inputStyle.button +
+    " " +
+    inputStyle.medium +
+    " " +
+    inputStyle.decent;
+
+  // const fields: { [id: string]: Field } = Object.fromEntries(
+  //   Object.values(nodes).map((i) => Object.entries(i.fields))
+  // );
+
   const fields: { [id: string]: Field } = Object.values(nodes).reduce(
     (prev, node) => ({ ...prev, ...node.fields }),
     {}
   );
 
+  const menuTree: MenuOption[] = [
+    {
+      title: "Add Node",
+      icon: "fas fa-plus",
+      label: "",
+      children: Object.values(NodeCategoryEnum).map((i) => ({
+        title: i.title,
+        label: i.title,
+        children: i.nodes.map((j) => ({
+          title: j.title,
+          label: j.title,
+          action: () => addNode(j),
+        })),
+      })),
+    },
+  ];
+  console.log("among us");
   return (
     <div className={style.nodeMapEditor} ref={dropRef}>
       <NodesProvider value={{ nodes, setNodes }}>
-        <TopBar>
+        <TopBar menuTree={menuTree}>
           <button onClick={sendSache} className={submitButtonClassName}>
             Ballern
           </button>
           {inNode.title + " to " + outNode.title}
           <button
-            onClick={() => setResult(null)}
-            className={submitButtonClassName}
+            onClick={() => {
+              setResult(null);
+              setNodes({
+                in: {
+                  title: "loading",
+                  color: "orange",
+                  fields: {},
+                  left: 0,
+                  top: 0,
+                },
+                out: {
+                  title: "loading",
+                  color: "orange",
+                  fields: {},
+                  left: 0,
+                  top: 0,
+                },
+              });
+            }}
+            className={decentButtonClassName}
           >
             Exit
-          </button>
-          <button onClick={addTestNode} className={submitButtonClassName}>
-            Machen
           </button>
         </TopBar>
         <NodeBar nodeId={"in"} items={inNode.fields} />
         <NodeBar nodeId={"out"} items={outNode.fields} />
+
+        {noodles.map(({ startId, endId }, idx) => {
+          const startField = fields[startId];
+          const endField = fields[endId];
+          return (
+            <Noodle
+              key={Math.random()}
+              // key={idx}
+              startField={fields[startId]}
+              endField={fields[endId]}
+            />
+          );
+        })}
 
         {Object.entries(bodyNodes).map(([id, i]) => (
           <BodyNode
@@ -168,14 +225,6 @@ function NodeMapEditor() {
             title={i.title}
             color={i.color}
             fields={i.fields}
-          />
-        ))}
-
-        {noodles.map(({ startId, endId }, idx) => (
-          <Noodle
-            key={idx}
-            startField={fields[startId]}
-            endField={fields[endId]}
           />
         ))}
       </NodesProvider>

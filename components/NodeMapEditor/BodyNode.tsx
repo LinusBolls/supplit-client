@@ -20,13 +20,13 @@ function BodyNode({
 }: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
 
-  const [{ isDragging, opacity }, dragRef] = useDrag(
+  const [{ isDragging, display }, dragRef] = useDrag(
     () => ({
       type: "NODE",
       item: { title, color, fields, nodeId, left, top },
       collect: (monitor) => ({
-        opacity: monitor.isDragging() ? 0.5 : 1,
         isDragging: monitor.isDragging(),
+        display: monitor.isDragging() ? "none" : "block",
       }),
     }),
     []
@@ -34,7 +34,11 @@ function BodyNode({
 
   return (
     <div
-      style={{ position: "absolute", opacity, left, top }}
+      style={{
+        left,
+        top,
+        display,
+      }}
       ref={dragRef}
       className={containerClassName + " " + style.node}
     >
