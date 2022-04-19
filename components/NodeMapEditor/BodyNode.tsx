@@ -1,4 +1,4 @@
-// import { useDrag } from "react-dnd";
+import type { RefObject } from "react";
 
 import useDrag from "./hooks/useDrag.hook";
 
@@ -21,31 +21,16 @@ function BodyNode({
   top,
 }: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
-
   const { dragRef, moveRef } = useDrag();
 
-  // const [{ isDragging, display }, dragRef] = useDrag(
-  //   () => ({
-  //     type: "NODE",
-  //     item: { title, color, fields, nodeId, left, top },
-  //     collect: (monitor) => ({
-  //       isDragging: monitor.isDragging(),
-  //       display: monitor.isDragging() ? "none" : "block",
-  //     }),
-  //   }),
-  //   []
-  // );
-
   return (
-    <div ref={moveRef as any} className={containerClassName + " " + style.node}>
-      <div
-        className={style.node__header}
-        style={{ background: color }}
-        ref={dragRef as any}
-      >
-        <button style={{ height: "3rem", width: "3rem" }}>a</button>
+    <div
+      ref={moveRef as RefObject<HTMLDivElement>}
+      className={containerClassName + " " + style.node}
+    >
+      <div className={style.node__header} style={{ background: color }}>
         <Button />
-        {title}
+        <span ref={dragRef as RefObject<HTMLDivElement>}>{title}</span>
         <ErrorHandlingSelector />
       </div>
       {isExpanded && (
