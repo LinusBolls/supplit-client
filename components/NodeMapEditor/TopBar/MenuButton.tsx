@@ -66,6 +66,7 @@ function MenuButton({
         >
           {children.map((i: any, idx: number) => (
             <MenuButton
+              key={idx}
               isHead={false}
               {...i}
               inheritedIsExpanded={idx === expandedRowIdx}

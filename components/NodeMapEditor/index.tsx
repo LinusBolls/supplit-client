@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import type { XYCoord } from "react-dnd";
+import { Rnd } from "react-rnd";
 import update from "immutability-helper";
 import axios from "axios";
 
@@ -66,8 +67,11 @@ function NodeMapEditor() {
       accept: "NODE",
       drop(item: any, monitor) {
         const delta = monitor.getDifferenceFromInitialOffset() as XYCoord;
-        const left = Math.round(item.left + delta.x);
-        const top = Math.round(item.top + delta.y);
+
+        console.log(delta);
+
+        const left = item.left + delta.x;
+        const top = item.top + delta.y;
 
         moveBox(item.nodeId, left, top);
       },
@@ -115,14 +119,6 @@ function NodeMapEditor() {
     return res.data;
   }
 
-  if (!result)
-    return (
-      <div className={promptStyle.prompt}>
-        <h1>Upload a file and start creating the schema</h1>
-        <CsvInput result={result} setResult={setResult} />
-      </div>
-    );
-
   const submitButtonClassName =
     inputStyle.input +
     " " +
@@ -166,7 +162,15 @@ function NodeMapEditor() {
       })),
     },
   ];
-  console.log("among us");
+
+  if (!result)
+    return (
+      <div className={promptStyle.prompt}>
+        <h1>Upload a file and start creating the schema</h1>
+        <CsvInput result={result} setResult={setResult} />
+      </div>
+    );
+
   return (
     <div className={style.nodeMapEditor} ref={dropRef}>
       <NodesProvider value={{ nodes, setNodes }}>
@@ -202,6 +206,18 @@ function NodeMapEditor() {
         </TopBar>
         <NodeBar nodeId={"in"} items={inNode.fields} />
         <NodeBar nodeId={"out"} items={outNode.fields} />
+
+        {/* <Rnd
+          style={{ background: "red", minWidth: "10rem", maxWidth: "20rem" }}
+          default={{
+            x: 0,
+            y: 0,
+            width: 320,
+            height: 200,
+          }}
+        >
+          Rnd
+        </Rnd> */}
 
         {noodles.map(({ startId, endId }, idx) => {
           const startField = fields[startId];

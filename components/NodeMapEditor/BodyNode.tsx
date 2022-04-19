@@ -1,4 +1,6 @@
-import { useDrag } from "react-dnd";
+// import { useDrag } from "react-dnd";
+
+import useDrag from "./hooks/useDrag.hook";
 
 import NodeBar from "./NodeBar";
 import ErrorHandlingSelector from "./ErrorHandlingSelector";
@@ -20,29 +22,28 @@ function BodyNode({
 }: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
 
-  const [{ isDragging, display }, dragRef] = useDrag(
-    () => ({
-      type: "NODE",
-      item: { title, color, fields, nodeId, left, top },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-        display: monitor.isDragging() ? "none" : "block",
-      }),
-    }),
-    []
-  );
+  const { dragRef, moveRef } = useDrag();
+
+  // const [{ isDragging, display }, dragRef] = useDrag(
+  //   () => ({
+  //     type: "NODE",
+  //     item: { title, color, fields, nodeId, left, top },
+  //     collect: (monitor) => ({
+  //       isDragging: monitor.isDragging(),
+  //       display: monitor.isDragging() ? "none" : "block",
+  //     }),
+  //   }),
+  //   []
+  // );
 
   return (
-    <div
-      style={{
-        left,
-        top,
-        display,
-      }}
-      ref={dragRef}
-      className={containerClassName + " " + style.node}
-    >
-      <div className={style.node__header} style={{ background: color }}>
+    <div ref={moveRef as any} className={containerClassName + " " + style.node}>
+      <div
+        className={style.node__header}
+        style={{ background: color }}
+        ref={dragRef as any}
+      >
+        <button style={{ height: "3rem", width: "3rem" }}>a</button>
         <Button />
         {title}
         <ErrorHandlingSelector />

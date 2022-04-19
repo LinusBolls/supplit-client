@@ -25,6 +25,7 @@
 
   transform: scale(0.8);
 }
+
 .node__header {
   position: relative;
   display: flex;
@@ -48,6 +49,7 @@
   height: 3rem;
 
   padding: 0 1rem;
+  font-size: 1rem!important;
 
   color: var(--white);
 }
@@ -108,9 +110,15 @@
 }
 .nodeMapEditor :nth-child(2) {
   left: 0; 
+
+  /* resize: horizontal;
+  overflow: auto; */
 }
 .nodeMapEditor :nth-child(3)  {
   right: 0;
+
+  /* resize: horizontal;
+  overflow: auto; */
 }
 .topBar {
   position: sticky;

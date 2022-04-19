@@ -19,7 +19,9 @@ function NodeInfo({ field }: NodeInfoProps) {
       >
         {field.type}
       </span>
-      <span style={{ color: "#ccc", fontSize: "0.5rem" }}>{field.example}</span>
+      <span style={{ color: "var(--text)", fontSize: "0.5rem" }}>
+        {field.example}
+      </span>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 
 import style from "../styles/index.module.css";
 import inputStyle from "../../../styles/input.module.css";
+import e from "express";
 
 interface UseExpansionProps {
   inheritedIsExpanded?: boolean;
@@ -36,7 +37,9 @@ function useExpansion({
         inputStyle.negative
       }
       title={isExpanded ? "Collapse Node" : "Expand Node"}
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={(e) => {
+        setIsExpanded(!isExpanded);
+      }}
     >
       <i className="fas fa-bars" style={{ fontSize: "1rem" }} />
     </button>
@@ -48,6 +51,5 @@ function useExpansion({
 
   return { Button, isExpanded, setIsExpanded, containerClassName };
 }
-
 export default useExpansion;
 export type { UseExpansionProps, UseExpansionValue };
