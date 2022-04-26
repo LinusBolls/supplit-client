@@ -1,10 +1,25 @@
-.nodeMapEditor > .nodeBar {
-  position: absolute;
+.nodeBarContainer {
 
-  top: 4rem;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
 
   width: 14rem;
-  min-height: calc(100% - 3rem);
+  min-height: 100%;
+
+  background: var(--dark);
+}
+.inNodeBarContainer {
+
+  left: 0;
+}
+.outNodeBarContainer {
+
+  right: 0;
+}
+
+.inNodeBar, .outNodeBar {
+  width: 100%;
 
   background: var(--dark);
 }
@@ -31,8 +46,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  height: 3rem;
 
   padding: 0 1.5rem;
 
@@ -100,41 +113,34 @@
 }
 .nodeMapEditor {
   position: relative;
+  display: grid;
+
+  grid-template-areas: "topbar topbar" "editor sidebar";
+  grid-template-rows: 5rem auto;
+  grid-template-columns: auto 14rem;
 
   width: 100vw;
   height: 100vh;
 
   background: var(--text);
+}
+.editor {
+  position: relative;
+  grid-area: editor;
 
   overflow-y: scroll;
 }
-.nodeMapEditor :nth-child(2) {
-  left: 0; 
-
-  /* resize: horizontal;
-  overflow: auto; */
-}
-.nodeMapEditor :nth-child(3)  {
-  right: 0;
-
-  /* resize: horizontal;
-  overflow: auto; */
-}
 .topBar {
-  position: sticky;
   display: flex;
   align-items: center;
+  grid-area: topbar;
 
   z-index: 999;
-  transform: rotate(0);
-  top: 0;
+  transform: rotate(0); /* hack to get the z-index working */
 
-  height: 4rem;
-  width: 100%;
+  padding: 0 1rem;
 
   background: var(--lessDark);
-
-  /* box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3); */
   border-bottom: 1px solid var(--text);
 }
 .node select {
@@ -182,7 +188,6 @@
 .expandButton i {
   font-size: 1rem;
 }
-
 .row {
   display: flex;
   align-items: center;
@@ -193,4 +198,32 @@
 }
 .nodeMapEditor > *:not(.noodle):not(.topBar) {
   z-index: 1;
+}
+.infoSidebar {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  grid-area: sidebar;
+  
+  min-height: 100%;
+  padding: 1rem;
+  
+  background: var(--lessDark);
+  border-left: 1px solid var(--text);
+}
+.errorCard {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  border-radius: 2px;
+  color: var(--lessDark);
+}
+.errorCard__topBar {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 3rem;
 }

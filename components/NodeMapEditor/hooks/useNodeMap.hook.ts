@@ -20,6 +20,14 @@ const makeIdGenerator = () => {
 };
 const makeUniqueId = makeIdGenerator();
 
+const toIdObject = (arr: any) => {
+  if (!arr?.length) return {};
+  return arr.reduce(
+    (prev: any, i: any) => ({ ...prev, [makeUniqueId()]: i }),
+    {}
+  );
+};
+
 function addAddressesToFields(nodes: { [id: string]: NodeData }) {
   const nodesWithAddresses = Object.fromEntries(
     Object.entries(nodes).map(([nodeId, node], nodeIdx) => [
@@ -70,7 +78,7 @@ function makeSchema(
 }
 
 function useNodeMap() {
-  const [nodes, setNodes] = useState<{ [id: string]: NodeData }>({
+  const loadingNodes = {
     in: {
       title: "loading",
       color: "orange",
@@ -85,7 +93,8 @@ function useNodeMap() {
       left: 0,
       top: 0,
     },
-  });
+  };
+  const [nodes, setNodes] = useState<{ [id: string]: NodeData }>(loadingNodes);
   const [noodles, setNoodles] = useState<NoodleData[]>([]);
   const [activeDot, setActiveDot] = useState<DotClickEventDetail | null>(null);
 
@@ -128,6 +137,7 @@ function useNodeMap() {
     inNode,
     outNode,
     bodyNodes,
+    loadingNodes,
     nodes,
     setNodes,
     noodles,
@@ -138,4 +148,4 @@ function useNodeMap() {
   };
 }
 export default useNodeMap;
-export { makeUniqueId };
+export { makeUniqueId, toIdObject };

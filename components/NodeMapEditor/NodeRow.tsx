@@ -1,8 +1,12 @@
+import { useContext } from "react";
+import update from "immutability-helper";
+
 import Dot from "./Dot";
 import NodeInfo from "./NodeInfo";
 import useExpansion from "./hooks/useExpansion.hook";
 import style from "./styles/index.module.css";
 import type { Field } from "./types";
+import NodesContext from "./contexts/nodes.context";
 
 interface NodeRowProps {
   nodeId: string;
@@ -10,7 +14,8 @@ interface NodeRowProps {
   field: Field;
   hasSeperator?: boolean;
   inheritedIsExpanded?: boolean;
-  inheritedSetIsExpanded?: () => void;
+  inheritedSetIsExpanded?: (v: boolean) => void;
+  isEditable: boolean;
 }
 function NodeRow({
   nodeId,
@@ -19,17 +24,26 @@ function NodeRow({
   hasSeperator = false,
   inheritedIsExpanded = false,
   inheritedSetIsExpanded,
+  isEditable,
 }: NodeRowProps) {
   const { Button, isExpanded, containerClassName } = useExpansion({
     inheritedIsExpanded,
     inheritedSetIsExpanded,
   });
+  const { setNodes } = useContext(NodesContext);
 
   const className =
     style.node__row +
     " " +
     style[field.facing === "input" ? "node__row--in" : "node__row--out"];
 
+  function removeSelf() {
+    setNodes((prev: any) => {
+      delete prev[nodeId].fields[fieldId];
+
+      return prev;
+    });
+  }
   return (
     <div className={containerClassName}>
       <div className={className}>
@@ -40,6 +54,7 @@ function NodeRow({
       </div>
       {isExpanded && (
         <div className={style.node__row__info}>
+          {isEditable && <button onClick={removeSelf}>a</button>}
           <NodeInfo field={field} />
         </div>
       )}

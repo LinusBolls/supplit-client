@@ -7,12 +7,12 @@ import e from "express";
 
 interface UseExpansionProps {
   inheritedIsExpanded?: boolean;
-  inheritedSetIsExpanded?: Dispatch<SetStateAction<boolean>>;
+  inheritedSetIsExpanded?: (v: boolean) => void;
 }
 interface UseExpansionValue {
   Button: any;
   isExpanded: boolean;
-  setIsExpanded: Dispatch<SetStateAction<boolean>>;
+  setIsExpanded: (v: boolean) => void;
   containerClassName: string;
 }
 

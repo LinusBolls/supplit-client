@@ -35,14 +35,22 @@ function Dot({ nodeId, fieldId }: DotProps) {
     );
   }, []);
 
-  const onClickHandler = (e: any) => {
+  const leftClickHandler = (e: any) => {
     e.stopPropagation();
 
     const event: DotClickEvent = new CustomEvent("dotClick", {
       detail: { nodeId, fieldId },
     });
     window.dispatchEvent(event);
+
+    alert("left click");
   };
+  const rightClickHandler = (e: any) => {
+    e.stopPropagation();
+
+    alert("right click");
+  };
+
   return (
     <button
       className={
@@ -57,7 +65,8 @@ function Dot({ nodeId, fieldId }: DotProps) {
         inputStyle.round
       }
       title="Connect Node"
-      onClick={onClickHandler}
+      onClick={leftClickHandler}
+      onContextMenu={rightClickHandler}
       ref={buttonRef}
     >
       <div className={style.dot__child} />

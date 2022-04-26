@@ -1,8 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useDrop } from "react-dnd";
-import type { XYCoord } from "react-dnd";
-import { Rnd } from "react-rnd";
-import update from "immutability-helper";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import TopBar, { MenuOption } from "./TopBar";
@@ -10,74 +6,80 @@ import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
-import useNodeMap, { makeUniqueId } from "./hooks/useNodeMap.hook";
+import useNodeMap, { makeUniqueId, toIdObject } from "./hooks/useNodeMap.hook";
 import csvToFields from "./util/csvToFields";
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import promptStyle from "../../styles/prompt.module.css";
+import fontStyle from "../../styles/font.module.css";
 import { Field } from "./types";
 import { NodesProvider } from "./contexts/nodes.context";
 import newNode from "./util/newNode";
-import NodeEnum, { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
+import { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
+import ErrorBar from "./ErrorBar";
+import { Err, NodeMapError } from "./Errors";
+import NodeBarContainer from "./NodeBarContainer";
 
-const EXAMPLE_OUT = [
-  ["EAN", "Price", "Vendor Specific Price"],
-  ["9374930483909", "300$", "amogus master"],
-];
+interface ParseResponse {
+  errors: NodeMapError[];
+  csv: string;
+}
 
 function NodeMapEditor() {
-  const [result, setResult] = useState<CsvInputState>(null);
+  const [csvInput, setCsvInput] = useState<CsvInputState>(null);
+  const [csvOutput, setCsvOutput] = useState<CsvInputState>(null);
+  const [parseResponse, setParseResponse] = useState<ParseResponse | null>(
+    null
+  );
 
-  const { inNode, outNode, bodyNodes, nodes, setNodes, noodles, calc } =
-    useNodeMap();
+  const {
+    inNode,
+    outNode,
+    bodyNodes,
+    loadingNodes,
+    nodes,
+    setNodes,
+    noodles,
+    calc,
+  } = useNodeMap();
 
   useEffect(() => {
-    if (result?.hasFiles) {
+    if (csvInput?.hasFiles) {
       setNodes((prev) => ({
         ...prev,
         in: {
-          title: result.files[0].name,
+          title: csvInput.files[0].name,
           color: "orange",
           fields: csvToFields(
-            result.files[0].papa.data as string[][],
+            csvInput.files[0].papa.data as string[][],
             "output"
           ),
           left: 0,
           top: 0,
         },
       }));
+    } else {
+      setCsvOutput(csvInput);
     }
-  }, [result]);
+  }, [csvInput]);
 
-  const moveBox = useCallback(
-    (id: string, left: number, top: number) => {
-      setNodes((prev) =>
-        update(prev, {
-          [id]: {
-            $merge: { left, top },
-          },
-        })
-      );
-    },
-    [nodes, setNodes]
-  );
-
-  const [, dropRef] = useDrop(
-    () => ({
-      accept: "NODE",
-      drop(item: any, monitor) {
-        const delta = monitor.getDifferenceFromInitialOffset() as XYCoord;
-
-        console.log(delta);
-
-        const left = item.left + delta.x;
-        const top = item.top + delta.y;
-
-        moveBox(item.nodeId, left, top);
-      },
-    }),
-    [moveBox]
-  );
+  useEffect(() => {
+    if (csvOutput?.hasFiles) {
+      setNodes((prev) => ({
+        ...prev,
+        out: {
+          title: csvOutput.files[0].name,
+          color: "orange",
+          fields: csvToFields(
+            csvOutput.files[0].papa.data as string[][],
+            "input"
+          ),
+          left: 0,
+          top: 0,
+        },
+      }));
+    }
+  }, [csvOutput]);
 
   function addNode(node: NodeOption) {
     setNodes((prev) => ({
@@ -86,37 +88,36 @@ function NodeMapEditor() {
     }));
   }
 
-  useEffect(() => {
-    setNodes((prev) => ({
-      ...prev,
-      out: {
-        title: "Ari Schema",
-        color: "orange",
-        fields: csvToFields(EXAMPLE_OUT, "input"),
-        left: 0,
-        top: 0,
-      },
-    }));
-  }, []);
-
   async function sendSache() {
-    if (!result?.hasFiles) return console.error("no csv file input found");
+    if (!csvInput?.hasFiles) return console.error("no csv file input found");
 
     const schema = calc();
-    const csv = result.files[0].papa.data;
+    const csv = csvInput.files[0].raw;
 
-    console.log({ schema, csv });
+    console.log("submitting:", { schema, csv });
 
-    alert(JSON.stringify(schema.noodles, null, 2));
-
-    if (result.files[0].papa.errors)
+    if (csvInput.files[0].papa.errors.length)
       return console.error("error during csv file parsing");
 
-    const res = await axios.post("http://localhost:8090/calc", {
-      csv,
-      schema,
-    });
-    return res.data;
+    try {
+      const res = await axios.post("http://localhost:8090/calc", {
+        csv,
+        schema,
+      });
+
+      setParseResponse(res.data);
+    } catch (err) {
+      setParseResponse({
+        csv: "",
+        errors: [
+          {
+            severity: Err.FATAL,
+            source: "Compiler",
+            desc: `Failed to connect to api: ${(err as any).message}`,
+          },
+        ],
+      });
+    }
   }
 
   const submitButtonClassName =
@@ -136,10 +137,6 @@ function NodeMapEditor() {
     inputStyle.medium +
     " " +
     inputStyle.decent;
-
-  // const fields: { [id: string]: Field } = Object.fromEntries(
-  //   Object.values(nodes).map((i) => Object.entries(i.fields))
-  // );
 
   const fields: { [id: string]: Field } = Object.values(nodes).reduce(
     (prev, node) => ({ ...prev, ...node.fields }),
@@ -163,87 +160,106 @@ function NodeMapEditor() {
     },
   ];
 
-  if (!result)
+  const noodlesHtml = noodles.map(({ startId, endId }, idx) => (
+    <Noodle
+      key={Math.random()}
+      // key={idx}
+      startField={fields[startId]}
+      endField={fields[endId]}
+    />
+  ));
+  const bodyNodesHtml = Object.entries(bodyNodes).map(([id, i]) => (
+    <BodyNode
+      key={id}
+      left={i.left}
+      top={i.top}
+      nodeId={id}
+      title={i.title}
+      color={i.color}
+      fields={i.fields}
+    />
+  ));
+
+  if (!csvInput)
     return (
       <div className={promptStyle.prompt}>
         <h1>Upload a file and start creating the schema</h1>
-        <CsvInput result={result} setResult={setResult} />
+        <CsvInput result={csvInput} setResult={setCsvInput} />
       </div>
     );
 
   return (
-    <div className={style.nodeMapEditor} ref={dropRef}>
-      <NodesProvider value={{ nodes, setNodes }}>
-        <TopBar menuTree={menuTree}>
-          <button onClick={sendSache} className={submitButtonClassName}>
-            Ballern
-          </button>
-          {inNode.title + " to " + outNode.title}
-          <button
-            onClick={() => {
-              setResult(null);
-              setNodes({
-                in: {
-                  title: "loading",
-                  color: "orange",
-                  fields: {},
-                  left: 0,
-                  top: 0,
-                },
-                out: {
-                  title: "loading",
-                  color: "orange",
-                  fields: {},
-                  left: 0,
-                  top: 0,
-                },
-              });
-            }}
-            className={decentButtonClassName}
-          >
-            Exit
-          </button>
-        </TopBar>
-        <NodeBar nodeId={"in"} items={inNode.fields} />
-        <NodeBar nodeId={"out"} items={outNode.fields} />
-
-        {/* <Rnd
-          style={{ background: "red", minWidth: "10rem", maxWidth: "20rem" }}
-          default={{
-            x: 0,
-            y: 0,
-            width: 320,
-            height: 200,
-          }}
+    <div className={style.nodeMapEditor}>
+      <TopBar menuTree={menuTree}>
+        <button onClick={sendSache} className={submitButtonClassName}>
+          Ballern
+        </button>
+        <h2
+          className={fontStyle.h2}
+          style={{ color: "var(--white)", paddingLeft: "1rem" }}
         >
-          Rnd
-        </Rnd> */}
+          {inNode.title + " to " + outNode.title}
+        </h2>
+        <button
+          onClick={() => {
+            setCsvInput(null);
+            setCsvOutput(null);
+            setNodes(loadingNodes);
+          }}
+          className={decentButtonClassName}
+        >
+          Exit
+        </button>
+      </TopBar>
 
-        {noodles.map(({ startId, endId }, idx) => {
-          const startField = fields[startId];
-          const endField = fields[endId];
-          return (
-            <Noodle
-              key={Math.random()}
-              // key={idx}
-              startField={fields[startId]}
-              endField={fields[endId]}
-            />
-          );
-        })}
-
-        {Object.entries(bodyNodes).map(([id, i]) => (
-          <BodyNode
-            key={id}
-            left={i.left}
-            top={i.top}
-            nodeId={id}
-            title={i.title}
-            color={i.color}
-            fields={i.fields}
+      <div className={style.editor}>
+        <NodesProvider value={{ nodes, setNodes }}>
+          <NodeBarContainer
+            nodeId="in"
+            node={nodes.in}
+            isEditable={true}
+            style={{ left: 0 }}
           />
-        ))}
-      </NodesProvider>
+          <NodeBarContainer
+            nodeId="out"
+            node={nodes.out}
+            isEditable={true}
+            style={{ right: 0 }}
+          />
+          {noodlesHtml}
+          {bodyNodesHtml}
+        </NodesProvider>
+      </div>
+
+      <div className={style.infoSidebar}>
+        <CsvInput result={csvInput} setResult={setCsvInput} />
+        <CsvInput result={csvOutput} setResult={setCsvOutput} />
+        <ErrorBar
+          errors={{
+            ...toIdObject(
+              csvInput?.files[0]?.papa.errors.map(
+                (error) =>
+                  ({
+                    severity: Err.WARN,
+                    source: "Input Csv",
+                    desc: error.message,
+                  } as NodeMapError)
+              )
+            ),
+            ...toIdObject(
+              csvOutput?.files[0]?.papa.errors.map(
+                (error) =>
+                  ({
+                    severity: Err.WARN,
+                    source: "Output Csv",
+                    desc: error.message,
+                  } as NodeMapError)
+              )
+            ),
+            ...toIdObject(parseResponse?.errors),
+          }}
+        />
+      </div>
     </div>
   );
 }

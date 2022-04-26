@@ -1,25 +1,5 @@
-interface ErrorOption {
-  name: string;
-  desc: string;
-  icon: string;
-}
-const Err: { [key: string]: ErrorOption } = {
-  FATAL: {
-    name: "FATAL",
-    desc: "Stops Execution",
-    icon: "fas fa-skull",
-  },
-  WARN: {
-    name: "WARN",
-    desc: "Displays a Warning",
-    icon: "fas fa-exlamation-triangle",
-  },
-  SILENT: {
-    name: "SILENT",
-    desc: "Terminates Current Noodle and Moves On",
-    icon: "fas fa-info-square",
-  },
-};
+import { Err } from "./Errors";
+
 function ErrorHandlingSelector() {
   return (
     <select title="Select Error Handling">
@@ -33,5 +13,3 @@ function ErrorHandlingSelector() {
   );
 }
 export default ErrorHandlingSelector;
-export { Err };
-export type { ErrorOption };

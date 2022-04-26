@@ -8,6 +8,7 @@ import style from "../../styles/input.module.css";
 
 interface CsvInputFile {
   name: string;
+  raw: string;
   papa: ParseResult<unknown>;
 }
 
@@ -21,26 +22,38 @@ interface CsvInputProps {
   setResult: Dispatch<SetStateAction<CsvInputState>>;
   [key: string]: any;
 }
-async function papaParse(source: any) {
-  return await new Promise((resolve) =>
+const papaParse = (source: any) =>
+  new Promise((res, rej) =>
     Papa.parse(source, {
-      complete: resolve,
+      complete: res,
+      error: rej,
     })
   );
-}
+
+const fileToString = (file: File) =>
+  new Promise((res, rej) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => res(e.target?.result);
+
+    reader.onerror = () => rej();
+
+    reader.readAsText(file);
+  });
 
 function CsvInput({ result, setResult, ...rest }: CsvInputProps) {
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleChange(e: any) {
     e?.stopPropagation();
 
-    const parsedFiles = Array.from(inputRef.current?.files)?.map(
-      async (file: any) => {
+    const parsedFiles = Array.from(inputRef.current?.files || []).map(
+      async (file) => {
         const name = file.name;
+        const raw = await fileToString(file);
         const papa = await papaParse(file);
 
-        return { name, papa };
+        return { name, raw, papa };
       }
     );
     const sachen = (await Promise.all(parsedFiles)) as CsvInputFile[];
@@ -64,7 +77,7 @@ function CsvInput({ result, setResult, ...rest }: CsvInputProps) {
         style={{ display: "none" }}
         {...rest}
       />
-      {inputRef.current?.files[0]?.name ?? defaultText}
+      {(inputRef.current?.files || [])[0]?.name ?? defaultText}
     </label>
   );
 }
