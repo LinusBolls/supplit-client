@@ -1,4 +1,5 @@
 .input {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,7 +7,7 @@
   width: 12rem;
   height: 3rem;
 
-  background: #666;
+  background: var(--lessDark);
 }
 .input input {
   box-sizing: border-box;
@@ -16,17 +17,19 @@
   padding: 0 1rem;
 
   font-size: 1rem;
-  color: white;
-  border-bottom: 2px solid #444;
+  color: var(--white);
+  border-bottom: 2px solid var(--text);
   background: none;
 }
 .input label {
   position: absolute;
 
+  top: 1rem;
+
   left: 1rem;
 
   font-size: 1rem;
-  color: white;
+  color: var(--white);
 
   transition-duration: 0.1s;
 }
@@ -35,7 +38,7 @@
   top: 0;
 
   font-size: 0.7rem;
-  color: #ccc;
+  color: var(--lightText);
 }
 .input input:focus {
   outline: none !important;

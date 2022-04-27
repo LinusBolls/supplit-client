@@ -7,6 +7,7 @@ import type {
   NodeData,
   NoodleData,
   NodeMapSchema,
+  Field,
 } from "../types";
 
 const makeIdGenerator = () => {
@@ -108,11 +109,15 @@ function useNodeMap() {
   //   const storedOutCsv = window.localStorage.getItem("schema-out-csv");
   // }
 
-  function handleDotClick(e: DotClickEvent) {
-    e.stopImmediatePropagation();
-
+  function handleDotLeftClick(e: DotClickEvent) {
     setActiveDot((currentActiveDot) => {
       if (!currentActiveDot) return e.detail;
+
+      const detailField = nodes[e.detail.nodeId].fields[e.detail.fieldId];
+      const currentField =
+        nodes[currentActiveDot?.nodeId]?.fields[currentActiveDot?.fieldId];
+
+      if (detailField.facing === currentField.facing) return currentActiveDot;
 
       const newNoodle: NoodleData = {
         startId: currentActiveDot.fieldId,
@@ -123,12 +128,44 @@ function useNodeMap() {
       return null;
     });
   }
+  function handleDotRightClick(e: DotClickEvent) {
+    const indexesToBeRemoved: number[] = [];
+
+    for (const [idx, noodle] of Object.entries(noodles)) {
+      if (
+        noodle.startId === e.detail.fieldId ||
+        noodle.endId === e.detail.fieldId
+      ) {
+        indexesToBeRemoved.push(parseInt(idx));
+      }
+    }
+
+    const newNoodles = noodles.filter(
+      (_, idx) => !indexesToBeRemoved.includes(idx)
+    );
+    setNoodles(newNoodles);
+  }
 
   useEffect(() => {
-    window?.addEventListener("dotClick", handleDotClick as any, false);
+    window?.addEventListener("dotLeftClick", handleDotLeftClick as any, false);
+    window?.addEventListener(
+      "dotRightClick",
+      handleDotRightClick as any,
+      false
+    );
 
-    return () =>
-      window?.removeEventListener("dotClick", handleDotClick as any, false);
+    return () => {
+      window?.removeEventListener(
+        "dotLeftClick",
+        handleDotLeftClick as any,
+        false
+      );
+      window?.removeEventListener(
+        "dotRightClick",
+        handleDotRightClick as any,
+        false
+      );
+    };
   }, [nodes, noodles]);
 
   const { in: inNode, out: outNode, ...bodyNodes } = nodes;

@@ -35,6 +35,14 @@
   border: 2px dashed var(--lightText);
   color: var(--lightText);
 }
+.bordered:not(:hover) {
+  color: var(--text);
+  border: 2px solid var(--text);
+}
+.bordered:hover {
+  color: var(--lightText);
+  border: 2px solid var(--lightText);
+}
 .solid:not(:hover) {
   background: white;
   color:#222;

@@ -1,3 +1,8 @@
+@font-face {
+  font-family: FontAwesome;
+  src: url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css);
+}
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";

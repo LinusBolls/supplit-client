@@ -1,4 +1,7 @@
 .nodeBarContainer {
+  
+  transform: rotate(0); /* hack to get the z-index to work */
+  z-index: 9;
 
   position: absolute;
   display: flex;
@@ -24,6 +27,7 @@
   background: var(--dark);
 }
 .nodeBar .node__row__container:nth-child(odd) {
+  
   background: var(--lessDark);
 }
 .nodeBar .node__row__container:nth-child(even) {
@@ -39,6 +43,8 @@
   font-family: Avenir;
 
   transform: scale(0.8);
+
+  z-index: 10;
 }
 
 .node__header {
@@ -167,11 +173,9 @@
 }
 .node__row__container {
   transition-duration: 0.1s;
-  height: 3rem;
-  /* overflow-y: hidden; */
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 8px 15px;
 }
 .node__row__container--expanded {
-  height: 6rem;
 }
 .expandButton {
   transition-duration: 0.1s;  

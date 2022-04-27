@@ -218,12 +218,14 @@ function NodeMapEditor() {
             nodeId="in"
             node={nodes.in}
             isEditable={true}
+            facing="output"
             style={{ left: 0 }}
           />
           <NodeBarContainer
             nodeId="out"
             node={nodes.out}
             isEditable={true}
+            facing="input"
             style={{ right: 0 }}
           />
           {noodlesHtml}

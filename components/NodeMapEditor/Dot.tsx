@@ -37,18 +37,21 @@ function Dot({ nodeId, fieldId }: DotProps) {
 
   const leftClickHandler = (e: any) => {
     e.stopPropagation();
+    e.preventDefault();
 
-    const event: DotClickEvent = new CustomEvent("dotClick", {
+    const event: DotClickEvent = new CustomEvent("dotLeftClick", {
       detail: { nodeId, fieldId },
     });
     window.dispatchEvent(event);
-
-    alert("left click");
   };
   const rightClickHandler = (e: any) => {
     e.stopPropagation();
+    e.preventDefault();
 
-    alert("right click");
+    const event: DotClickEvent = new CustomEvent("dotRightClick", {
+      detail: { nodeId, fieldId },
+    });
+    window.dispatchEvent(event);
   };
 
   return (

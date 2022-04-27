@@ -8,6 +8,7 @@ import ErrorHandlingSelector from "./ErrorHandlingSelector";
 import useExpansion from "./hooks/useExpansion.hook";
 import NodesContext from "./contexts/nodes.context";
 import style from "./styles/index.module.css";
+import inputStyle from "../../styles/input.module.css";
 import type { NodeData } from "./types";
 
 interface BodyNodeProps {
@@ -37,15 +38,41 @@ function BodyNode({
     <div
       ref={moveRef as RefObject<HTMLDivElement>}
       className={containerClassName + " " + style.node}
+      style={{ background: "none" }}
     >
-      <button onClick={removeSelf}>a</button>
-      <div className={style.node__header} style={{ background: color }}>
+      <div
+        className={style.node__header}
+        style={{ background: color, borderRadius: isExpanded ? 0 : "0.5rem" }}
+      >
         <Button />
         <span ref={dragRef as RefObject<HTMLDivElement>}>{title}</span>
         <ErrorHandlingSelector />
       </div>
       {isExpanded && (
         <>
+          <div
+            style={{
+              padding: "0 1.5rem",
+              display: "flex",
+              flexDirection: "row-reverse",
+              background: "var(--dark)",
+            }}
+          >
+            <button
+              onClick={removeSelf}
+              className={
+                inputStyle.input +
+                " " +
+                inputStyle.button +
+                " " +
+                inputStyle.square
+              }
+              style={{ color: "var(--text)" }}
+              title="Remove Node"
+            >
+              <i className="fas fa-trash" />
+            </button>
+          </div>
           <NodeBar nodeId={nodeId} items={fields} isEditable={false} />
         </>
       )}

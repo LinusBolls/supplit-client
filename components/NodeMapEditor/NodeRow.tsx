@@ -4,6 +4,7 @@ import update from "immutability-helper";
 import Dot from "./Dot";
 import NodeInfo from "./NodeInfo";
 import useExpansion from "./hooks/useExpansion.hook";
+import inputStyle from "../../styles/input.module.css";
 import style from "./styles/index.module.css";
 import type { Field } from "./types";
 import NodesContext from "./contexts/nodes.context";
@@ -54,7 +55,30 @@ function NodeRow({
       </div>
       {isExpanded && (
         <div className={style.node__row__info}>
-          {isEditable && <button onClick={removeSelf}>a</button>}
+          {isEditable && (
+            <div
+              style={{
+                padding: "0 1.5rem",
+                display: "flex",
+                flexDirection: "row-reverse",
+              }}
+            >
+              <button
+                onClick={removeSelf}
+                className={
+                  inputStyle.input +
+                  " " +
+                  inputStyle.button +
+                  " " +
+                  inputStyle.square
+                }
+                style={{ color: "var(--text)" }}
+                title="Remove Node"
+              >
+                <i className="fas fa-trash" />
+              </button>
+            </div>
+          )}
           <NodeInfo field={field} />
         </div>
       )}
