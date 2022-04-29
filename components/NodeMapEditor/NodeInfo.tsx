@@ -10,6 +10,7 @@ function NodeInfo({ field }: NodeInfoProps) {
         display: "flex",
         flexDirection: "column",
         paddingLeft: "1.5rem",
+        height: "3rem",
       }}
     >
       <span
@@ -17,10 +18,10 @@ function NodeInfo({ field }: NodeInfoProps) {
           color: "lime",
         }}
       >
-        {field.type}
+        {field.field.type}
       </span>
       <span style={{ color: "var(--text)", fontSize: "0.5rem" }}>
-        {field.example}
+        {field.field.example}
       </span>
     </div>
   );

@@ -41,8 +41,14 @@ function BodyNode({
       style={{ background: "none" }}
     >
       <div
-        className={style.node__header}
-        style={{ background: color, borderRadius: isExpanded ? 0 : "0.5rem" }}
+        className={
+          style.node__header +
+          " " +
+          style[
+            isExpanded ? "node__header--expanded" : "node__header--collapsed"
+          ]
+        }
+        style={{ background: color }}
       >
         <Button />
         <span ref={dragRef as RefObject<HTMLDivElement>}>{title}</span>

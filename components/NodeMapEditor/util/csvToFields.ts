@@ -16,13 +16,16 @@ function invertCsv(content: any[][]) {
 
   return content[0].map((_, idx) => content.map((col) => col[idx]));
 }
-function csvToColumns(invertedCsv: any[][], facing: Facing) {
+function csvToColumns(invertedCsv: any[][], facing: Facing): Field[] {
   const dinge = invertedCsv.map(([columnName, ...values]) => ({
     name: columnName,
-    type: getType(values).type,
-    example: values.filter((i) => i !== "" && i != null)[0],
-    noodles: [],
-    facing,
+    field: {
+      type: getType(values).type,
+      example: values.filter((i) => i !== "" && i != null)[0],
+      facing,
+      ref: null,
+      id: "",
+    },
   }));
   return dinge;
 }

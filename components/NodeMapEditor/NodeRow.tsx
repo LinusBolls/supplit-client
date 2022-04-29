@@ -36,7 +36,7 @@ function NodeRow({
   const className =
     style.node__row +
     " " +
-    style[field.facing === "input" ? "node__row--in" : "node__row--out"];
+    style[field.field.facing === "input" ? "node__row--in" : "node__row--out"];
 
   function removeSelf() {
     setNodes((prev: any) => {
@@ -54,13 +54,14 @@ function NodeRow({
         <Button />
       </div>
       {isExpanded && (
-        <div className={style.node__row__info}>
+        <>
           {isEditable && (
             <div
               style={{
                 padding: "0 1.5rem",
                 display: "flex",
                 flexDirection: "row-reverse",
+                height: "3rem",
               }}
             >
               <button
@@ -79,8 +80,9 @@ function NodeRow({
               </button>
             </div>
           )}
+
           <NodeInfo field={field} />
-        </div>
+        </>
       )}
     </div>
   );

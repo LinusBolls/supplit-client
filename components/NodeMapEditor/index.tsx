@@ -113,7 +113,7 @@ function NodeMapEditor() {
           {
             severity: Err.FATAL,
             source: "Compiler",
-            desc: `Failed to connect to api: ${(err as any).message}`,
+            desc: `Failed to connect to api: ${(err as Error).message}`,
           },
         ],
       });
@@ -256,9 +256,9 @@ function NodeMapEditor() {
                     source: "Output Csv",
                     desc: error.message,
                   } as NodeMapError)
-              )
+              ) ?? []
             ),
-            ...toIdObject(parseResponse?.errors),
+            ...toIdObject(parseResponse?.errors ?? []),
           }}
         />
       </div>

@@ -1,42 +1,39 @@
 import FieldEnum from "./fields.enum";
 import type { FieldOption } from "./fields.enum";
 
-interface WithName {
-  name: string;
-}
 interface NodeOption {
   title: string;
-  inFields: (FieldOption & WithName)[];
-  outFields: (FieldOption & WithName)[];
+  inFields: { field: FieldOption; name: string }[];
+  outFields: { field: FieldOption; name: string }[];
   category: string;
 }
 const NodeEnum: { [key: string]: NodeOption } = {
   VALIDATE_EAN: {
     title: "Validate EAN",
-    inFields: [{ ...FieldEnum.EAN, name: "EAN" }],
-    outFields: [{ ...FieldEnum.EAN, name: "EAN" }],
+    inFields: [{ field: FieldEnum.EAN, name: "EAN" }],
+    outFields: [{ field: FieldEnum.EAN, name: "EAN" }],
     category: "VALIDATORS",
   },
   VALIDATE_PRICE: {
     title: "Validate Price",
-    inFields: [{ ...FieldEnum.PRICE, name: "Price" }],
-    outFields: [{ ...FieldEnum.PRICE, name: "Price" }],
+    inFields: [{ field: FieldEnum.PRICE, name: "Price" }],
+    outFields: [{ field: FieldEnum.PRICE, name: "Price" }],
     category: "VALIDATORS",
   },
   VALIDATE_PERCENTAGE: {
     title: "Validate Percentage",
-    inFields: [{ ...FieldEnum.PERCENTAGE, name: "Percentage" }],
-    outFields: [{ ...FieldEnum.PERCENTAGE, name: "Percentage" }],
+    inFields: [{ field: FieldEnum.PERCENTAGE, name: "Percentage" }],
+    outFields: [{ field: FieldEnum.PERCENTAGE, name: "Percentage" }],
     category: "VALIDATORS",
   },
   MULTIPLY: {
     title: "Multiply",
     inFields: [
-      { ...FieldEnum.NUMBER, name: "Multiplier" },
-      { ...FieldEnum.NUMBER, name: "Multiplier" },
+      { field: FieldEnum.NUMBER, name: "Multiplier" },
+      { field: FieldEnum.NUMBER, name: "Multiplier" },
     ],
 
-    outFields: [{ ...FieldEnum.NUMBER, name: "Product" }],
+    outFields: [{ field: FieldEnum.NUMBER, name: "Product" }],
     category: "CALCULATORS",
   },
 };

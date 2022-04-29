@@ -5,10 +5,14 @@ type Facing = "input" | "output";
 
 interface Field {
   name: string;
-  type: string;
-  example: string;
-  facing: Facing;
-  ref: RefObject<HTMLButtonElement> | null;
+
+  field: {
+    type: string;
+    example: string;
+    facing: Facing;
+    ref: RefObject<HTMLButtonElement> | null;
+    id: string;
+  };
 }
 type FieldWithAddress = Field & {
   address: Address;

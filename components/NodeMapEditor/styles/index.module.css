@@ -231,3 +231,12 @@
   width: 100%;
   height: 3rem;
 }
+.node__header--expanded {
+
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.node__header--collapsed {
+
+  border-radius: 2px;
+}

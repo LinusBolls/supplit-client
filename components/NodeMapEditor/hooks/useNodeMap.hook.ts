@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 import type { DotClickEventDetail, DotClickEvent } from "../Dot";
 import type {
@@ -21,7 +22,7 @@ const makeIdGenerator = () => {
 };
 const makeUniqueId = makeIdGenerator();
 
-const toIdObject = (arr: any) => {
+const toIdObject = <T>(arr: T[]): { [key: string]: T } => {
   if (!arr?.length) return {};
   return arr.reduce(
     (prev: any, i: any) => ({ ...prev, [makeUniqueId()]: i }),
@@ -78,7 +79,20 @@ function makeSchema(
   };
 }
 
-function useNodeMap() {
+interface UseNodeMapValue {
+  inNode: NodeData;
+  outNode: NodeData;
+  bodyNodes: { [key: string]: NodeData };
+  loadingNodes: { [key: string]: NodeData };
+  nodes: { [key: string]: NodeData };
+  setNodes: Dispatch<SetStateAction<{ [key: string]: NodeData }>>;
+  noodles: NoodleData[];
+  setNoodles: Dispatch<SetStateAction<NoodleData[]>>;
+  activeDot: DotClickEventDetail | null;
+  setActiveDot: Dispatch<SetStateAction<DotClickEventDetail | null>>;
+  calc: () => NodeMapSchema;
+}
+function useNodeMap(): UseNodeMapValue {
   const loadingNodes = {
     in: {
       title: "loading",
@@ -113,11 +127,16 @@ function useNodeMap() {
     setActiveDot((currentActiveDot) => {
       if (!currentActiveDot) return e.detail;
 
-      const detailField = nodes[e.detail.nodeId].fields[e.detail.fieldId];
-      const currentField =
-        nodes[currentActiveDot?.nodeId]?.fields[currentActiveDot?.fieldId];
+      console.log("nodeId:", currentActiveDot.nodeId);
+      console.log("fieldId:", currentActiveDot.fieldId);
 
-      if (detailField.facing === currentField.facing) return currentActiveDot;
+      if (
+        !isValidNoodle(
+          [currentActiveDot.nodeId, currentActiveDot.fieldId],
+          [e.detail.nodeId, e.detail.fieldId]
+        )
+      )
+        return currentActiveDot;
 
       const newNoodle: NoodleData = {
         startId: currentActiveDot.fieldId,
@@ -170,6 +189,45 @@ function useNodeMap() {
 
   const { in: inNode, out: outNode, ...bodyNodes } = nodes;
 
+  function isValidNoodle(
+    firstAddress: [string, string],
+    secondAddress: [string, string]
+  ) {
+    console.log({ firstAddress, secondAddress });
+
+    const firstField = nodes[firstAddress[0]].fields[firstAddress[1]];
+    const secondField = nodes[secondAddress[0]].fields[secondAddress[1]];
+
+    if (firstAddress[0] === secondAddress[0]) return false;
+    if (firstField.field.facing === secondField.field.facing) return false;
+
+    const fields: { [id: string]: Field } = Object.values(nodes).reduce(
+      (prev, node) => ({ ...prev, ...node.fields }),
+      {}
+    );
+
+    const inputField =
+      firstField.field.facing === "input" ? firstField : secondField;
+
+    for (const noodle of noodles) {
+      if (
+        noodle.startId === firstField.field.id &&
+        noodle.endId === secondField.field.id
+      )
+        return false;
+
+      if (
+        noodle.startId === secondField.field.id &&
+        noodle.endId === firstField.field.id
+      )
+        return false;
+
+      if (noodle.startId === inputField.field.id) return false;
+      if (noodle.endId === inputField.field.id) return false;
+    }
+    return true;
+  }
+
   return {
     inNode,
     outNode,
@@ -186,3 +244,4 @@ function useNodeMap() {
 }
 export default useNodeMap;
 export { makeUniqueId, toIdObject };
+export type { UseNodeMapValue };
