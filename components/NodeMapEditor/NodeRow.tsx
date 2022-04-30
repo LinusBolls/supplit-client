@@ -7,7 +7,8 @@ import useExpansion from "./hooks/useExpansion.hook";
 import inputStyle from "../../styles/input.module.css";
 import style from "./styles/index.module.css";
 import type { Field } from "./types";
-import NodesContext from "./contexts/nodes.context";
+import NodesContext from "./services/schemaData";
+import type { UseNodeMapValue } from "./services/schemaData/useSchemaData.hook";
 
 interface NodeRowProps {
   nodeId: string;
@@ -31,7 +32,7 @@ function NodeRow({
     inheritedIsExpanded,
     inheritedSetIsExpanded,
   });
-  const { setNodes } = useContext(NodesContext);
+  const { setNodes } = useContext(NodesContext) as UseNodeMapValue;
 
   const className =
     style.node__row +

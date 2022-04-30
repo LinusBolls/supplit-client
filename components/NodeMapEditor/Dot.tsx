@@ -3,9 +3,9 @@ import update from "immutability-helper";
 
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
-import NodesContext from "./contexts/nodes.context";
+import NodesContext from "./services/schemaData";
 
-import type { UseNodeMapValue } from "./hooks/useNodeMap.hook";
+import type { UseNodeMapValue } from "./services/schemaData/useSchemaData.hook";
 
 interface DotProps {
   nodeId: string;

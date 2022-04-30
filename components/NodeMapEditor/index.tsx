@@ -10,14 +10,14 @@ import {
   makeUniqueId,
   toIdObject,
   UseNodeMapValue,
-} from "./hooks/useNodeMap.hook";
+} from "./services/schemaData/useSchemaData.hook";
 import csvToFields from "./util/csvToFields";
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import promptStyle from "../../styles/prompt.module.css";
 import fontStyle from "../../styles/font.module.css";
 import { Field } from "./types";
-import NodesContext from "./contexts/nodes.context";
+import NodesContext from "./services/schemaData";
 
 import newNode from "./util/newNode";
 import { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
@@ -25,7 +25,8 @@ import ErrorBar from "./ErrorBar";
 import { Err, NodeMapError } from "./Errors";
 import NodeBarContainer from "./NodeBarContainer";
 
-import withNodeMapContext from "./contexts/withNodeMapContext";
+import { withSchemaDataContext } from "./services/schemaData";
+import { withServerDataContext } from "./services/serverData";
 
 interface ParseResponse {
   errors: NodeMapError[];
@@ -283,4 +284,4 @@ function NodeMapEditor() {
     </div>
   );
 }
-export default withNodeMapContext(NodeMapEditor);
+export default withServerDataContext(withSchemaDataContext(NodeMapEditor));

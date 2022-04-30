@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { Err } from "../Errors";
-import FieldEnum from "../enums/fields.enum";
-import { NodeCategoryEnum } from "../enums/nodes.enum";
+import { Err } from "../../Errors";
+import FieldEnum from "../../enums/fields.enum";
+import { NodeCategoryEnum } from "../../enums/nodes.enum";
 
-import type { ErrorOption, NodeMapError } from "../Errors";
-import type { FieldOption } from "../enums/fields.enum";
-import type { NodeCategoryOption } from "../enums/nodes.enum";
+import type { ErrorOption, NodeMapError } from "../../Errors";
+import type { FieldOption } from "../../enums/fields.enum";
+import type { NodeCategoryOption } from "../../enums/nodes.enum";
 
 interface UseServerDataValue {
   severities: { [key: string]: ErrorOption };
@@ -60,3 +60,4 @@ function useServerData(): UseServerDataValue {
   return { severities, fields, nodeCategories, fetchErrors };
 }
 export default useServerData;
+export type { UseServerDataValue };

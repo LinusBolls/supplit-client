@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 
-import type { DotClickEventDetail, DotClickEvent } from "../Dot";
+import type { DotClickEventDetail, DotClickEvent } from "../../Dot";
 import type {
   Address,
   FieldWithAddress,
   NodeData,
   NoodleData,
   NodeMapSchema,
-  Field,
-} from "../types";
+} from "../../types";
 
 const makeIdGenerator = () => {
   let counter = 0;

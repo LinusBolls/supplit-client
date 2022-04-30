@@ -3,10 +3,12 @@ import type { RefObject } from "react";
 
 import useDrag from "./hooks/useDrag.hook";
 
+import type { UseNodeMapValue } from "./services/schemaData/useSchemaData.hook";
+
 import NodeBar from "./NodeBar";
 import ErrorHandlingSelector from "./ErrorHandlingSelector";
 import useExpansion from "./hooks/useExpansion.hook";
-import NodesContext from "./contexts/nodes.context";
+import NodesContext from "./services/schemaData";
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import type { NodeData } from "./types";
@@ -25,7 +27,7 @@ function BodyNode({
 }: NodeData & BodyNodeProps) {
   const { isExpanded, containerClassName, Button } = useExpansion({});
   const { dragRef, moveRef } = useDrag();
-  const { setNodes } = useContext(NodesContext);
+  const { setNodes } = useContext(NodesContext) as UseNodeMapValue;
 
   function removeSelf() {
     setNodes((prev: any) => {

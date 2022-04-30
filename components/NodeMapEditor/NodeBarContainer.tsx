@@ -3,14 +3,17 @@ import update from "immutability-helper";
 
 import NodeBar from "./NodeBar";
 import FieldEnum from "./enums/fields.enum";
-import { makeUniqueId, UseNodeMapValue } from "./hooks/useNodeMap.hook";
+import {
+  makeUniqueId,
+  UseNodeMapValue,
+} from "./services/schemaData/useSchemaData.hook";
 
 import type { NodeData, Field, Facing } from "./types";
 
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 
-import NodesContext from "./contexts/nodes.context";
+import NodesContext from "./services/schemaData";
 import Input from "../Input";
 import Select from "../Select";
 

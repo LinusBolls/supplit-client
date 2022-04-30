@@ -1,4 +1,4 @@
-import { makeUniqueId } from "../hooks/useNodeMap.hook";
+import { makeUniqueId } from "../services/schemaData/useSchemaData.hook";
 import FieldEnum from "../enums/fields.enum";
 import type { FieldOption } from "../enums/fields.enum";
 import type { Field, Facing } from "../types";
