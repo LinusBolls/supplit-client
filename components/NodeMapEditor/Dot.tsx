@@ -63,7 +63,7 @@ function Dot({ nodeId, fieldId }: DotProps) {
     activeDot?.nodeId === nodeId && activeDot?.fieldId === fieldId;
 
   const background = (function getColor() {
-    if (isActiveDot) return "cyan";
+    if (isActiveDot) return "var(--action)";
     if (
       activeDot == null ||
       isValidNoodle(

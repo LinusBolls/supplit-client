@@ -1,12 +1,16 @@
 .prompt {
 
+  display: flex;
+  flex-direction: column;
+
   position: relative;
-  top: 10rem;
+  top: 15rem;
   margin: auto;  
 
   width: 95%;
-  max-width: 42rem;
+  max-width: 34rem;
   padding: 3rem 2rem;
 
+  border-radius: 0.5rem;
   background: var(--dark);
 }

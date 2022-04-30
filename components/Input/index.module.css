@@ -24,12 +24,12 @@
 .input label {
   position: absolute;
 
-  top: 1rem;
+  top: 0.7.5rem;
 
   left: 1rem;
 
   font-size: 1rem;
-  color: var(--white);
+  color: var(--text);
 
   transition-duration: 0.1s;
 }
@@ -38,9 +38,9 @@
   top: 0;
 
   font-size: 0.7rem;
-  color: var(--lightText);
+  color: var(--text);
 }
 .input input:focus {
   outline: none !important;
-  border-bottom: 2px solid blue;
+  border-bottom: 2px solid cyan;
 }

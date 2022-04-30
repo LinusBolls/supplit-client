@@ -72,13 +72,15 @@ function CsvInput({ result, setResult, ...rest }: CsvInputProps) {
   const defaultText = "Drag a .csv file here or click to upload";
 
   return (
-    <label className={style.input + " " + style.medium + " " + style.dashed}>
+    <label
+      className={style.input + " " + style.medium + " " + style.dashed}
+      {...rest}
+    >
       <input
         type="file"
         accept=".csv"
         ref={inputRef}
         style={{ display: "none" }}
-        {...rest}
       />
       {(inputRef.current?.files || [])[0]?.name ?? defaultText}
     </label>

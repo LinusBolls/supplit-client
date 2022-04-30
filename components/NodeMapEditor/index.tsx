@@ -191,7 +191,15 @@ function NodeMapEditor() {
   if (!csvInput)
     return (
       <div className={promptStyle.prompt}>
-        <h1>Upload a file and start creating the schema</h1>
+        <h1
+          style={{
+            color: "var(--lightText)",
+            marginBottom: "2rem",
+            fontSize: "1.6rem",
+          }}
+        >
+          Upload a file and start creating the schema
+        </h1>
         <CsvInput result={csvInput} setResult={setCsvInput} />
       </div>
     );
@@ -240,7 +248,11 @@ function NodeMapEditor() {
       </div>
 
       <div className={style.infoSidebar}>
-        <CsvInput result={csvInput} setResult={setCsvInput} />
+        <CsvInput
+          result={csvInput}
+          setResult={setCsvInput}
+          style={{ marginBottom: "1rem" }}
+        />
         <CsvInput result={csvOutput} setResult={setCsvOutput} />
         <ErrorBar
           errors={{
