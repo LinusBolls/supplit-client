@@ -5,6 +5,8 @@ import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import NodesContext from "./contexts/nodes.context";
 
+import type { UseNodeMapValue } from "./hooks/useNodeMap.hook";
+
 interface DotProps {
   nodeId: string;
   fieldId: string;
@@ -18,7 +20,10 @@ type DotClickEvent = CustomEvent<DotClickEventDetail>;
 function Dot({ nodeId, fieldId }: DotProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const { setNodes } = useContext(NodesContext);
+  const { setNodes, activeDot, isValidNoodle } = useContext(
+    NodesContext
+  ) as UseNodeMapValue;
+
   useEffect(() => {
     setNodes((prev: any) =>
       update(prev, {
@@ -54,6 +59,23 @@ function Dot({ nodeId, fieldId }: DotProps) {
     window.dispatchEvent(event);
   };
 
+  const isActiveDot =
+    activeDot?.nodeId === nodeId && activeDot?.fieldId === fieldId;
+
+  const background = (function getColor() {
+    if (isActiveDot) return "cyan";
+    if (
+      activeDot == null ||
+      isValidNoodle(
+        [activeDot?.nodeId as string, activeDot?.fieldId as string],
+        [nodeId, fieldId]
+      )
+    )
+      return "var(--white)";
+
+    return "#999";
+  })();
+
   return (
     <button
       className={
@@ -72,7 +94,12 @@ function Dot({ nodeId, fieldId }: DotProps) {
       onContextMenu={rightClickHandler}
       ref={buttonRef}
     >
-      <div className={style.dot__child} />
+      <div
+        className={style.dot__child}
+        style={{
+          background,
+        }}
+      />
     </button>
   );
 }

@@ -80,6 +80,10 @@ function makeSchema(
 }
 
 interface UseNodeMapValue {
+  isValidNoodle: (
+    firstAddress: [string, string],
+    secondAddress: [string, string]
+  ) => boolean;
   inNode: NodeData;
   outNode: NodeData;
   bodyNodes: { [key: string]: NodeData };
@@ -193,19 +197,19 @@ function useNodeMap(): UseNodeMapValue {
     firstAddress: [string, string],
     secondAddress: [string, string]
   ) {
-    console.log({ firstAddress, secondAddress });
+    if (
+      firstAddress[0] == null ||
+      firstAddress[1] == null ||
+      secondAddress[0] == null ||
+      secondAddress[1] == null
+    )
+      return false;
 
     const firstField = nodes[firstAddress[0]].fields[firstAddress[1]];
     const secondField = nodes[secondAddress[0]].fields[secondAddress[1]];
 
     if (firstAddress[0] === secondAddress[0]) return false;
     if (firstField.field.facing === secondField.field.facing) return false;
-
-    const fields: { [id: string]: Field } = Object.values(nodes).reduce(
-      (prev, node) => ({ ...prev, ...node.fields }),
-      {}
-    );
-
     const inputField =
       firstField.field.facing === "input" ? firstField : secondField;
 
@@ -227,8 +231,8 @@ function useNodeMap(): UseNodeMapValue {
     }
     return true;
   }
-
   return {
+    isValidNoodle,
     inNode,
     outNode,
     bodyNodes,

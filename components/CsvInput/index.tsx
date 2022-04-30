@@ -56,7 +56,10 @@ function CsvInput({ result, setResult, ...rest }: CsvInputProps) {
         return { name, raw, papa };
       }
     );
+
     const sachen = (await Promise.all(parsedFiles)) as CsvInputFile[];
+
+    (inputRef.current as HTMLInputElement).value = "";
 
     setResult({ files: sachen, hasFiles: sachen.length > 0 });
   }

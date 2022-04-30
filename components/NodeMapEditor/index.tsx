@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 import TopBar, { MenuOption } from "./TopBar";
@@ -6,19 +6,26 @@ import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
-import useNodeMap, { makeUniqueId, toIdObject } from "./hooks/useNodeMap.hook";
+import {
+  makeUniqueId,
+  toIdObject,
+  UseNodeMapValue,
+} from "./hooks/useNodeMap.hook";
 import csvToFields from "./util/csvToFields";
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import promptStyle from "../../styles/prompt.module.css";
 import fontStyle from "../../styles/font.module.css";
 import { Field } from "./types";
-import { NodesProvider } from "./contexts/nodes.context";
+import NodesContext from "./contexts/nodes.context";
+
 import newNode from "./util/newNode";
 import { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
 import ErrorBar from "./ErrorBar";
 import { Err, NodeMapError } from "./Errors";
 import NodeBarContainer from "./NodeBarContainer";
+
+import withNodeMapContext from "./contexts/withNodeMapContext";
 
 interface ParseResponse {
   errors: NodeMapError[];
@@ -41,7 +48,7 @@ function NodeMapEditor() {
     setNodes,
     noodles,
     calc,
-  } = useNodeMap();
+  } = useContext(NodesContext) as UseNodeMapValue;
 
   useEffect(() => {
     if (csvInput?.hasFiles) {
@@ -58,8 +65,9 @@ function NodeMapEditor() {
           top: 0,
         },
       }));
-    } else {
-      setCsvOutput(csvInput);
+      if (!csvOutput?.hasFiles) {
+        setCsvOutput(csvInput);
+      }
     }
   }, [csvInput]);
 
@@ -213,24 +221,22 @@ function NodeMapEditor() {
       </TopBar>
 
       <div className={style.editor}>
-        <NodesProvider value={{ nodes, setNodes }}>
-          <NodeBarContainer
-            nodeId="in"
-            node={nodes.in}
-            isEditable={true}
-            facing="output"
-            style={{ left: 0 }}
-          />
-          <NodeBarContainer
-            nodeId="out"
-            node={nodes.out}
-            isEditable={true}
-            facing="input"
-            style={{ right: 0 }}
-          />
-          {noodlesHtml}
-          {bodyNodesHtml}
-        </NodesProvider>
+        <NodeBarContainer
+          nodeId="in"
+          node={nodes.in}
+          isEditable={true}
+          facing="output"
+          style={{ left: 0 }}
+        />
+        <NodeBarContainer
+          nodeId="out"
+          node={nodes.out}
+          isEditable={true}
+          facing="input"
+          style={{ right: 0 }}
+        />
+        {noodlesHtml}
+        {bodyNodesHtml}
       </div>
 
       <div className={style.infoSidebar}>
@@ -265,4 +271,4 @@ function NodeMapEditor() {
     </div>
   );
 }
-export default NodeMapEditor;
+export default withNodeMapContext(NodeMapEditor);

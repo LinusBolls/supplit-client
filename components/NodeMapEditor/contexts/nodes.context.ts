@@ -1,11 +1,8 @@
 import { createContext } from "react";
 
-import { NodeData } from "../types";
+import type { UseNodeMapValue } from "../hooks/useNodeMap.hook";
 
-const NodesContext = createContext<{
-  nodes: { [key: string]: NodeData } | null;
-  setNodes: any;
-}>({ nodes: null, setNodes: null });
+const NodesContext = createContext<UseNodeMapValue | null>(null);
 
 const NodesProvider = NodesContext.Provider;
 
