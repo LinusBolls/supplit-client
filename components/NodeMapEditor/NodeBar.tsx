@@ -37,6 +37,7 @@ function NodeBar({
             setExpandedRowIdx(v ? idx : null);
           }}
           isEditable={isEditable}
+          isHardCodeable={true}
         />
       ))}
     </div>

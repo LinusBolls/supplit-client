@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
+import type { NodeCategoryOption } from "./enums/nodes.enum";
+
 import TopBar, { MenuOption } from "./TopBar";
-import NodeBar from "./NodeBar";
 import BodyNode from "./BodyNode";
 import Noodle from "./Noodle";
 import CsvInput, { CsvInputState } from "../CsvInput";
@@ -20,13 +21,16 @@ import { Field } from "./types";
 import NodesContext from "./services/schemaData";
 
 import newNode from "./util/newNode";
-import { NodeCategoryEnum, NodeOption } from "./enums/nodes.enum";
+import { NodeOption } from "./enums/nodes.enum";
 import ErrorBar from "./ErrorBar";
 import { Err, NodeMapError } from "./Errors";
 import NodeBarContainer from "./NodeBarContainer";
 
 import { withSchemaDataContext } from "./services/schemaData";
-import { withServerDataContext } from "./services/serverData";
+import ServerDataContext, {
+  withServerDataContext,
+} from "./services/serverData";
+import { UseServerDataValue } from "./services/serverData/useServerData.hook";
 
 interface ParseResponse {
   errors: NodeMapError[];
@@ -39,6 +43,10 @@ function NodeMapEditor() {
   const [parseResponse, setParseResponse] = useState<ParseResponse | null>(
     null
   );
+
+  const { nodeCategories, fetchErrors } = useContext(
+    ServerDataContext
+  ) as UseServerDataValue;
 
   const {
     inNode,
@@ -90,10 +98,10 @@ function NodeMapEditor() {
     }
   }, [csvOutput]);
 
-  function addNode(node: NodeOption) {
+  function addNode(node: NodeOption, nodeCategory: NodeCategoryOption) {
     setNodes((prev) => ({
       ...prev,
-      ...newNode(node, makeUniqueId, 500, 100),
+      ...newNode(node, nodeCategory, makeUniqueId, 500, 100),
     }));
   }
 
@@ -157,13 +165,13 @@ function NodeMapEditor() {
       title: "Add Node",
       icon: "fas fa-plus",
       label: "",
-      children: Object.values(NodeCategoryEnum).map((i) => ({
+      children: Object.values(nodeCategories).map((i) => ({
         title: i.title,
         label: i.title,
         children: i.nodes.map((j) => ({
           title: j.title,
           label: j.title,
-          action: () => addNode(j),
+          action: () => addNode(j, i),
         })),
       })),
     },
@@ -278,6 +286,7 @@ function NodeMapEditor() {
               ) ?? []
             ),
             ...toIdObject(parseResponse?.errors ?? []),
+            ...toIdObject(fetchErrors),
           }}
         />
       </div>

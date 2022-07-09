@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import update from "immutability-helper";
 
 import Dot from "./Dot";
@@ -18,6 +18,7 @@ interface NodeRowProps {
   inheritedIsExpanded?: boolean;
   inheritedSetIsExpanded?: (v: boolean) => void;
   isEditable: boolean;
+  isHardCodeable: boolean;
 }
 function NodeRow({
   nodeId,
@@ -27,6 +28,7 @@ function NodeRow({
   inheritedIsExpanded = false,
   inheritedSetIsExpanded,
   isEditable,
+  isHardCodeable,
 }: NodeRowProps) {
   const { Button, isExpanded, containerClassName } = useExpansion({
     inheritedIsExpanded,
@@ -82,7 +84,7 @@ function NodeRow({
             </div>
           )}
 
-          <NodeInfo field={field} />
+          <NodeInfo field={field} isHardCodeable={isHardCodeable} />
         </>
       )}
     </div>

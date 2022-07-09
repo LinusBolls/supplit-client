@@ -1,8 +1,12 @@
+import { useContext } from "react";
+
 import style from "./styles/index.module.css";
 import inputStyle from "../../styles/input.module.css";
 import fontStyle from "../../styles/font.module.css";
 
-import { Err, NodeMapError } from "./Errors";
+import { NodeMapError } from "./Errors";
+
+import ServerDataContext from "./services/serverData";
 
 interface ErrorBarProps {
   errors: { [key: string]: NodeMapError };
@@ -35,6 +39,12 @@ function ErrorCard({ error }: { error: NodeMapError }) {
 function ErrorBar({ errors }: ErrorBarProps) {
   const numErrors = Object.values(errors)?.length;
 
+  const val = useContext(ServerDataContext);
+
+  if (val == null) return;
+
+  const { severities } = val;
+
   return (
     <>
       <h2
@@ -50,7 +60,7 @@ function ErrorBar({ errors }: ErrorBarProps) {
       ) : (
         <ErrorCard
           error={{
-            severity: Err.SILENT,
+            severity: severities.SILENT,
             source: "",
             desc: "Everything is fine.",
           }}

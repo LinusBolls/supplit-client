@@ -42,5 +42,5 @@
 }
 .input input:focus {
   outline: none !important;
-  border-bottom: 2px solid cyan;
+  border-bottom: 2px solid var(--action);
 }

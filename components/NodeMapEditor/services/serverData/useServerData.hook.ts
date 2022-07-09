@@ -3,7 +3,6 @@ import axios from "axios";
 
 import { Err } from "../../Errors";
 import FieldEnum from "../../enums/fields.enum";
-import { NodeCategoryEnum } from "../../enums/nodes.enum";
 
 import type { ErrorOption, NodeMapError } from "../../Errors";
 import type { FieldOption } from "../../enums/fields.enum";
@@ -32,29 +31,30 @@ function useServerData(): UseServerDataValue {
 
   const [fetchErrors, setFetchErrors] = useState<NodeMapError[]>([]);
 
+  const handleErrs = (_: any) =>
+    setFetchErrors([
+      {
+        severity: Err.FATAL,
+        desc: "Failed to fetch data",
+        source: "Api",
+      },
+    ]);
+
   useEffect(() => {
-    setSeverities(Err);
-    setFields(FieldEnum);
-    setNodeCategories(NodeCategoryEnum);
-    // (async () => {
-    //   try {
-    //     axios
-    //       .get(`${URL}/data/severities`)
-    //       .then((res) => setSeverities(res.data));
-    //     axios.get(`${URL}/data/fieldsRes`).then((res) => setFields(res.data));
-    //     axios
-    //       .get(`${URL}/data/nodecategories`)
-    //       .then((res) => setNodeCategories(res.data));
-    //   } catch (err) {
-    //     setFetchErrors([
-    //       {
-    //         severity: Err.FATAL,
-    //         desc: "Failed to fetch data",
-    //         source: "Api",
-    //       },
-    //     ]);
-    //   }
-    // })();
+    (async () => {
+      axios
+        .get(`${URL}/data/severities`)
+        .then((res) => setSeverities(res.data))
+        .catch(handleErrs);
+      axios
+        .get(`${URL}/data/fields`)
+        .then((res) => setFields(res.data))
+        .catch(handleErrs);
+      axios
+        .get(`${URL}/data/nodecategories`)
+        .then((res) => setNodeCategories(res.data))
+        .catch(handleErrs);
+    })();
   }, []);
 
   return { severities, fields, nodeCategories, fetchErrors };

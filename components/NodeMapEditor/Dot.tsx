@@ -25,13 +25,15 @@ function Dot({ nodeId, fieldId }: DotProps) {
   ) as UseNodeMapValue;
 
   useEffect(() => {
-    setNodes((prev: any) =>
+    setNodes((prev) =>
       update(prev, {
         [nodeId]: {
           fields: {
             [fieldId]: {
-              $merge: {
-                ref: buttonRef,
+              field: {
+                $merge: {
+                  ref: buttonRef,
+                },
               },
             },
           },

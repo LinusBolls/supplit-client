@@ -1,17 +1,18 @@
-import { NodeCategoryEnum } from "../enums/nodes.enum";
+import type { NodeCategoryOption } from "../enums/nodes.enum";
 import type { NodeOption } from "../enums/nodes.enum";
 import type { Field, NodeData } from "../types";
 
 function newNode(
   node: NodeOption,
+  nodeCategory: NodeCategoryOption,
   makeUniqueId: any,
   left: number,
   top: number
 ): {
   [key: string]: NodeData;
 } {
-  const { title, inFields, outFields, category } = node;
-  const { color } = NodeCategoryEnum[category];
+  const { title, inFields, outFields } = node;
+  const { color } = nodeCategory;
 
   const resolvedInFields = inFields.reduce((prev, field) => {
     const newId = makeUniqueId();

@@ -35,12 +35,11 @@
 }
 .node {
   width: 18rem;
-  position: relative;
+  position: absolute;
 
-  background: var(--lessDark);
   font-size: 1rem;
-
   font-family: Avenir;
+  background: var(--lessDark);
 
   transform: scale(0.8);
 
@@ -174,6 +173,8 @@
 .node__row__container {
   transition-duration: 0.1s;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 8px 15px;
+
+
 }
 .node__row__container--expanded {
 }
@@ -220,6 +221,7 @@
   flex-direction: column;
 
   width: 100%;
+  margin-bottom: 1rem;
 
   border-radius: 2px;
   color: var(--lessDark);
